@@ -1,0 +1,50 @@
+# npm ignore
+npm-debug.log
+node_modules
+public/__apidoc
+mocha.json
+coverage
+.nyc_output
+build
+yarn.lock
+*.log
+*.ipr
+.tmp
+*.iws
+# Sublime Text
+*.sublime-workspace
+
+# vim
+*.swp
+
+# kdiff3
+*.orig
+
+# OSX
+Thumbs.db
+.DS_Store
+
+# Packages
+*.jar
+*.zip
+
+# Eclipse files
+*.classpath
+*.project
+*.settings
+.checkstyle
+
+# IntelliJ IDEA files
+.idea/
+*.iml
+/.metadata
+
+#floobits
+.floo
+.flooignore
+
+public/main.js
+public/fonts
+public/css
+
+db/data.json
