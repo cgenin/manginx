@@ -14,4 +14,8 @@ describe('test of env class', () => {
     expect(confFileRootDir).to.be.not.undefined;
     expect(confFileRootDir).to.be.not.empty;
   });
+
+  it('should getInstallDir', () => {
+    expect(env.getInstallDir()).to.have.string('manginx');
+  });
 });

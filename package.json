@@ -4,8 +4,8 @@
   "description": "An cli manager for nginx.",
   "main": "index.js",
   "scripts": {
-    "coverage": "NODE_ENV=test nyc --all mocha src/**/**.spec.js",
-    "test": "NODE_ENV=test mocha src/**/**.spec.js"
+    "coverage": "NODE_ENV=test nyc --all mocha src/*.spec.js src/**/*.spec.js",
+    "test": "NODE_ENV=test mocha src/*.spec.js src/**/*.spec.js"
   },
   "keywords": [
     "node",
@@ -24,10 +24,11 @@
   },
   "nyc": {
     "include": [
-      "src/**/*.js"
+      "src/**/**.js",
+      "src/*.js"
     ],
     "exclude": [
-      "src/**/*.spec.js"
+      "src/**/**.spec.js"
     ],
     "reporter": [
       "html",
@@ -43,6 +44,7 @@
     "handlebars": "^4.0.11",
     "inquirer": "^6.1.0",
     "lokijs": "^1.5.5",
+    "rewiremock": "^3.7.7",
     "rxjs": "^6.2.2",
     "rxjs-compat": "^6.2.2",
     "temp-dir": "^1.0.0",

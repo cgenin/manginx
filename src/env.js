@@ -20,6 +20,10 @@ class Env {
   getDbFilePath() {
     return path.resolve(this.getConfFileRootDir(), fileName);
   }
+
+  getInstallDir() {
+    return path.resolve(__filename, '..', '..');
+  }
 }
 
 module.exports = new Env();

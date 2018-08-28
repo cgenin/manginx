@@ -1,6 +1,8 @@
 const Rx = require('rxjs/Rx');
-const spawn = require('child_process').spawn;
+const path = require('path');
+const childProcess = require('child_process');
 const DB = require('../db');
+const env = require('../env');
 const {createCategoryLogger} = require('../Logger');
 
 const logger = createCategoryLogger('nginx');
@@ -22,14 +24,14 @@ function logOutput(buf) {
 class Start {
   static testIfExist(commandName) {
     return Rx.Observable.create((observer) => {
-      const nginx = spawn(commandName, ['-v']);
+      const nginx = childProcess.spawn(commandName, ['-v']);
       nginx.stdout.on('data', logOutput);
       nginx.stderr.on('data', logOutput);
       nginx.stderr.on('data', (buff) => {
         if (buff.toString()
           .match(/nginx version/)) {
           observer.next(commandName);
-          // observer.complete();
+          observer.complete();
         } else {
           observer.error(new Error('No nginx global command found.'));
           observer.complete();
@@ -41,7 +43,8 @@ class Start {
   static launch(command) {
     return Rx.Observable.create((observer) => {
       let started = false;
-      const nginx = spawn(command, ['-c', '/Users/christophegenin/IdeaProjects/manginx/conf/nginx.conf']);
+      const confFile = path.resolve(env.getInstallDir(), 'conf','nginx.conf');
+      const nginx = childProcess.spawn(command, ['-c', confFile]);
       nginx.stdout.on('data', logOutput);
       nginx.stderr.on('data', logOutput);
       nginx.stderr.on('data', (buff) => {

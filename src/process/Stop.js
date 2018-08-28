@@ -2,9 +2,12 @@ const Rx = require('rxjs/Rx');
 const fkill = require('fkill');
 
 class Stop {
-// eslint-disable-next-line class-methods-use-this
+  constructor(killer) {
+    this.killer = killer || fkill;
+  }
+  // eslint-disable-next-line class-methods-use-this
   run() {
-    return Rx.Observable.fromPromise(fkill('nginx'))
+    return Rx.Observable.fromPromise(this.killer('nginx'))
       .map(() => true);
   }
 }
