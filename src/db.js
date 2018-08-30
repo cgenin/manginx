@@ -6,7 +6,7 @@ let instance = null;
 const CONF_DB = 'configuration';
 const TEMPLATES_DB = 'templates';
 const CURRENT_DB = 'current';
-const DB_NAMES = [CONF_DB, TEMPLATES_DB];
+const DB_NAMES = [CONF_DB, CURRENT_DB, TEMPLATES_DB];
 
 class ArrayColl {
   constructor(db, coll) {

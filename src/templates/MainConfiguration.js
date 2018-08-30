@@ -11,16 +11,22 @@ class MainConfiguration {
   }
 
   copyMimeTypes() {
-    const mimeTypeSrcFile = path.resolve(env.getInstallDir(), 'conf', 'mime.types');
-    const targetFile = path.resolve(this.targetDirectory, 'mime.types');
+    const mimeTypeSrcFile = path.resolve(env.getInstallDir(), 'main-conf', 'mime.types');
+    const targetFile = this.getMimetypesFilePath();
     const copy = Rx.Observable.bindNodeCallback(fs.copy);
     return copy(mimeTypeSrcFile, targetFile)
       .map(() => targetFile);
   }
 
+  getMimetypesFilePath() {
+    return path.resolve(this.targetDirectory, 'mime.types');
+  }
+
+
+
   generateMainConfFile() {
-    const mainTemplatePath = path.resolve(env.getInstallDir(), 'conf', 'nginx.conf.hbs');
-    const targetFile = path.resolve(this.targetDirectory, 'nginx.conf');
+    const mainTemplatePath = path.resolve(env.getInstallDir(), 'main-conf', 'nginx.conf.hbs');
+    const targetFile = this.getMainconfFilePath();
     const datas = {
       generateDir: this.targetDirectory,
       installDir: env.getInstallDir()
@@ -29,6 +35,10 @@ class MainConfiguration {
       .compileFromFile(mainTemplatePath)
       .generate(datas)
       .toFile(targetFile);
+  }
+
+  getMainconfFilePath() {
+    return path.resolve(this.targetDirectory, 'nginx.conf');
   }
 
   generate() {
