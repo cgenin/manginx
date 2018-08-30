@@ -1,11 +1,10 @@
 const Rx = require('rxjs/Rx');
-const path = require('path');
 const childProcess = require('child_process');
 const DB = require('../db');
-const env = require('../env');
+const TemplatesManager = require('../templates/TemplatesManager');
 const {createCategoryLogger} = require('../Logger');
 
-const logger = createCategoryLogger('nginx');
+const logger = createCategoryLogger('nginx\'s logs -> ');
 
 function logOutput(buf) {
   const lines = buf.toString()
@@ -40,10 +39,9 @@ class Start {
     });
   }
 
-  static launch(command) {
+  static launch(command, confFile) {
     return Rx.Observable.create((observer) => {
       let started = false;
-      const confFile = path.resolve(env.getInstallDir(), 'conf','nginx.conf');
       const nginx = childProcess.spawn(command, ['-c', confFile]);
       nginx.stdout.on('data', logOutput);
       nginx.stderr.on('data', logOutput);
@@ -65,10 +63,11 @@ class Start {
       logger.info('No Installed nginx found. Used global installation instead.');
     }
     return Start.testIfExist(commandName)
-      .flatMap(c => Start.launch(c));
+      .flatMap(c => TemplatesManager.run()
+        .flatMap(confFile => Start.launch(c, confFile)));
   }
 
-// eslint-disable-next-line class-methods-use-this
+  // eslint-disable-next-line class-methods-use-this
   run() {
     return DB.initialize()
       .flatMap((db) => {

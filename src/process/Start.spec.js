@@ -1,5 +1,7 @@
 const sinon = require('sinon');
+const Rx = require('rxjs/Rx');
 const childProcess = require('child_process');
+const TemplatesManager = require('../templates/TemplatesManager');
 const {expect} = require('chai');
 const Start = require('./Start');
 
@@ -35,7 +37,10 @@ describe('Start\'s test', () => {
     Start.testIfExist('onePath')
       .subscribe(
         (res) => {
-          expect(res).to.be.equal('onePath');
+          expect(res)
+            .to
+            .be
+            .equal('onePath');
           done();
         },
         (err) => {
@@ -53,7 +58,10 @@ describe('Start\'s test', () => {
           done(new Error(res));
         },
         (err) => {
-          expect(err.message).to.be.equal('test');
+          expect(err.message)
+            .to
+            .be
+            .equal('test');
           done();
         }
       );
@@ -71,7 +79,10 @@ describe('Start\'s test', () => {
           done(new Error(res));
         },
         (err) => {
-          expect(err.message).to.be.equal('No nginx global command found.');
+          expect(err.message)
+            .to
+            .be
+            .equal('No nginx global command found.');
           done();
         }
       );
@@ -89,11 +100,17 @@ describe('Start\'s test', () => {
         stderr: new Std('start worker process 89'),
         stdout: new Std('start worker process 89')
       });
+    sandbox.stub(TemplatesManager, 'run')
+      .onFirstCall()
+      .returns(Rx.Observable.of('test'));
 
     Start.start()
       .subscribe(
         (res) => {
-          expect(res).to.be.equal(true);
+          expect(res)
+            .to
+            .be
+            .equal(true);
           done();
         },
         (err) => {
@@ -101,6 +118,4 @@ describe('Start\'s test', () => {
         }
       );
   });
-
-
 });

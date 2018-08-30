@@ -4,13 +4,59 @@ const Env = require('./env');
 
 let instance = null;
 const CONF_DB = 'configuration';
-const RUN_DB = 'runner';
-const DB_NAMES = [CONF_DB, RUN_DB];
+const TEMPLATES_DB = 'templates';
+const CURRENT_DB = 'current';
+const DB_NAMES = [CONF_DB, TEMPLATES_DB];
 
+class ArrayColl {
+  constructor(db, coll) {
+    this.coll = coll;
+    this.db = db;
+  }
+
+  list() {
+    return this.coll.data || [];
+  }
+
+  add(obj) {
+    if (!obj) {
+      throw new Error('The obj to add ust not be null.');
+    }
+    if (!obj.name) {
+      throw new Error('the property \'name\' must be provided.');
+    }
+
+    if (obj.name && this.list()
+      .findIndex(o => obj.name === o.name) !== -1) {
+      throw new Error('Impossible to add becausse already exists. Please remove Before');
+    }
+
+    this.coll.insert(obj);
+    this.db.saveDatabase();
+    return true;
+  }
+
+  remove(arg) {
+    const isString = typeof arg === 'string';
+    const searchName = (isString) ? arg : arg.name;
+    if (!searchName) {
+      throw new Error('Impossible to remove empty name.');
+    }
+    const res = this.list()
+      .find(obj => obj.name === searchName);
+    if (!res) {
+      return true;
+    }
+    this.coll.remove(res);
+    this.db.saveDatabase();
+    return true;
+  }
+}
 
 class SingletonColl {
-  constructor(coll) {
+  constructor(db, coll) {
     this.coll = coll;
+    this.db = db;
   }
 
   state() {
@@ -20,6 +66,7 @@ class SingletonColl {
   save(diff) {
     const newValues = Object.assign(this.state(), diff);
     this.coll.update(newValues);
+    this.db.saveDatabase();
     return true;
   }
 }
@@ -31,29 +78,25 @@ class DB {
     }
 
     return Rx.Observable.create((observer) => {
-      try {
-        const filePath = dbPath || Env.getDbFilePath();
-        this.db = new Lokijs(filePath, {autosave: true});
+      const filePath = dbPath || Env.getDbFilePath();
+      this.db = new Lokijs(filePath, {autosave: true});
 
-        this.db.loadDatabase({}, (err) => {
-          if (err) {
-            observer.error(err);
-            return;
+      this.db.loadDatabase({}, (err) => {
+        if (err) {
+          observer.error(err);
+          return;
+        }
+
+        DB_NAMES.forEach((collName) => {
+          if (!this.db.getCollection(collName)) {
+            this.db.addCollection(collName);
           }
-
-          DB_NAMES.forEach((collName) => {
-            if (!this.db.getCollection(collName)) {
-              this.db.addCollection(collName);
-            }
-          });
-          this.db.saveDatabase();
-          instance = this;
-          observer.next(this);
-          observer.complete();
         });
-      } catch (e) {
-        observer.error(e);
-      }
+        this.db.saveDatabase();
+        instance = this;
+        observer.next(this);
+        observer.complete();
+      });
     });
   }
 
@@ -61,8 +104,13 @@ class DB {
     return this.getSingleton(CONF_DB);
   }
 
-  runner() {
-    return this.getSingleton(RUN_DB);
+  templates() {
+    const collection = this.db.getCollection(TEMPLATES_DB);
+    return new ArrayColl(this.db, collection);
+  }
+
+  current() {
+    return this.getSingleton(CURRENT_DB);
   }
 
   close() {
@@ -76,7 +124,7 @@ class DB {
       confCollection.insert({});
     }
 
-    return new SingletonColl(confCollection);
+    return new SingletonColl(this.db, confCollection);
   }
 }
 

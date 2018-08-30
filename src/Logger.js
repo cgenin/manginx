@@ -31,7 +31,7 @@ module.exports = {
   logger,
   winston,
   createCategoryLogger(name) {
-    const addCat = obj => `<${name}> ${obj}`;
+    const addCat = obj => `${name} ${obj}`;
     return {
       info(obj) {
         logger.info(addCat(obj));

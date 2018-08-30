@@ -4,6 +4,7 @@
   "description": "An cli manager for nginx.",
   "main": "index.js",
   "scripts": {
+    "eslint" : "eslint src",
     "coverage": "NODE_ENV=test nyc --all mocha src/*.spec.js src/**/*.spec.js",
     "test": "NODE_ENV=test mocha src/*.spec.js src/**/*.spec.js"
   },

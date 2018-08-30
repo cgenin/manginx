@@ -1,10 +1,15 @@
 /* eslint-disable no-underscore-dangle */
 const program = require('commander');
+const templateCommand = require('./template-command');
 const Start = require('./process/Start');
 const Stop = require('./process/Stop');
 const {createCategoryLogger} = require('./Logger');
+const packageJson = require('../package');
 
 const logger = createCategoryLogger('Manginx');
+
+program
+  .version(packageJson.version);
 
 program
   .command('start')
@@ -13,9 +18,14 @@ program
   .action(() => {
     new Start().run()
       .subscribe((res) => {
-        logger.info(res);
+        if (!res) {
+          logger.info('Nginx has failed to start 💥');
+        } else {
+          logger.info('Nginx started 🌈');
+        }
         process.exit();
       }, (err) => {
+        console.error(err);
         logger.error(err);
         process.exit(1);
       });
@@ -29,7 +39,7 @@ program
     new Stop().run()
       .subscribe((res) => {
         if (res) {
-          logger.info('All processes stopped');
+          logger.info('All processes stopped. 🌈');
         }
       }, err => logger.error(err));
   });
@@ -51,13 +61,19 @@ program
       })
       .subscribe((res) => {
         if (res) {
-          logger.info('Reloaded.');
+          logger.info('Reloaded. 🌈');
         }
         process.exit();
       }, (err) => {
         logger.error(err);
         process.exit(1);
       });
+  });
+
+program
+  .command('template [otherArgs...]')
+  .action((otherArgs) => {
+    templateCommand(otherArgs);
   });
 
 program.parse(process.argv);

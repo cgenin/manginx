@@ -11,6 +11,11 @@ class Generator {
     this.template = TEMPLATES[id];
   }
 
+  compileFromFile(pathToFile) {
+    const buff = fs.readFileSync(pathToFile);
+    return this.compile(buff.toString());
+  }
+
   compile(text) {
     if (!this.template) {
       TEMPLATES[this.id] = Handlebars.compile(text);
@@ -37,7 +42,8 @@ class Generator {
   toFile(filePath) {
     const outputFile = Rx.Observable.bindNodeCallback(fs.outputFile);
     return this.toText()
-      .flatMap(t => outputFile(filePath, t));
+      .flatMap(t => outputFile(filePath, t))
+      .map(() => filePath);
   }
 }
 
