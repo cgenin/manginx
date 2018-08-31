@@ -9,7 +9,6 @@ const packageJson = require('../package');
 const logger = createCategoryLogger('Manginx');
 
 module.exports = (args, successCallback, errorCallback) => {
-
   program
     .version(packageJson.version);
 

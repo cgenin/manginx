@@ -44,7 +44,16 @@ module.exports = (args, successCallback, errorCallback) => {
     .command(removeCmd)
     .description(removeDescription)
     .action((name) => {
-
+      Templates.remove(name)
+        .subscribe(
+          (t) => {
+            logger.info(`✖︎ '${t}' was successfully removed.`);
+          },
+          (err) => {
+            logger.error(err);
+            errorCallback();
+          }
+        );
     });
   program
     .command(listCmd)
