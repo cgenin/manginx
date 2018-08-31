@@ -1,7 +1,7 @@
 const path = require('path');
 const Rx = require('rxjs/Rx');
 const fs = require('fs-extra');
-const Generator = require('./Generator');
+const Generator = require('../Generator');
 const env = require('../env');
 
 
@@ -21,7 +21,6 @@ class MainConfiguration {
   getMimetypesFilePath() {
     return path.resolve(this.targetDirectory, 'mime.types');
   }
-
 
 
   generateMainConfFile() {

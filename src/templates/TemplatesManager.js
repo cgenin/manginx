@@ -1,8 +1,8 @@
 const Rx = require('rxjs/Rx');
 const env = require('../env');
-const Templates = require('./TemplatesModel');
-const MainConfiguration = require('./MainConfiguration');
-const TemplatesConfiguration = require('./TemplatesConfiguration');
+const Templates = require('../models/TemplatesModel');
+const MainConfiguration = require('../conf/MainConfiguration');
+const TemplatesConfiguration = require('../conf/TemplatesConfiguration');
 const {createCategoryLogger} = require('../Logger');
 
 const logger = createCategoryLogger('⚙️');
@@ -18,7 +18,7 @@ module.exports = {
     return env.targetDir()
       .flatMap((targetDirectory) => {
         logger.info(` ✹ Creation of the directory : ${targetDirectory}`);
-        return new Templates().toArray()
+        return Templates.toArray()
           .flatMap(templates => generateAllTemplates(targetDirectory, templates));
       })
       .do((fileName) => {

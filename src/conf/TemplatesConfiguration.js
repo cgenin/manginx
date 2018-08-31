@@ -2,7 +2,7 @@ const path = require('path');
 const Rx = require('rxjs/Rx');
 const fs = require('fs-extra');
 const env = require('../env');
-const Generator = require('./Generator');
+const Generator = require('../Generator');
 const {createCategoryLogger} = require('../Logger');
 
 const logger = createCategoryLogger('⌨️');

@@ -44,15 +44,8 @@ describe('Db\'s test', () => {
 
   it('test current data', (done) => {
     db.initialize(absPath).map(d => d.current())
-      .map((conf) => {
-        expect(conf.state()).to.be.not.null;
-        expect(conf.state()).to.be.not.undefined;
-        expect(conf.save({test: 2})).to.be.equal(true);
-        return conf.state();
-      })
-      .subscribe((res) => {
-        const {test} = res;
-        expect(test).to.be.equal(2);
+      .subscribe((conf) => {
+        expect(conf.list()).to.be.empty;
         db.close();
         done();
       }, err => done(err));

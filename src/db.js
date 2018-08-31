@@ -14,6 +14,11 @@ class ArrayColl {
     this.db = db;
   }
 
+  clear() {
+    this.coll.clear();
+    this.db.saveDatabase();
+  }
+
   list() {
     return this.coll.data || [];
   }
@@ -110,7 +115,8 @@ class DB {
   }
 
   current() {
-    return this.getSingleton(CURRENT_DB);
+    const collection = this.db.getCollection(CURRENT_DB);
+    return new ArrayColl(this.db, collection);
   }
 
   close() {
