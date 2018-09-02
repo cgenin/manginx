@@ -1,8 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 const program = require('commander');
-const templateCommand = require('./template-command');
+const templateCommand = require('./templateCommand');
 const Start = require('./process/Start');
 const Stop = require('./process/Stop');
+const CurrentModel = require('./models/CurrentModel');
 const {createCategoryLogger} = require('./Logger');
 const packageJson = require('../package');
 
@@ -78,8 +79,42 @@ module.exports = (args, successCallback, errorCallback) => {
   program
     .command('template [otherArgs...]')
     .action((otherArgs) => {
-      templateCommand(otherArgs, successCallback, errorCallback);
+      const arr = [process.argv[0], process.argv[1]].concat(otherArgs);
+      templateCommand(arr, successCallback, errorCallback);
     });
 
+  program.command('use <name>')
+    .action((name) => {
+      CurrentModel.add(name)
+        .subscribe((res) => {
+          if (res) {
+            logger.info('Successfully added. 🌈');
+          } else {
+            logger.info('Command not added. 🚫');
+          }
+          successCallback();
+        }, (err) => {
+          logger.error(err);
+          errorCallback();
+        });
+    });
+
+  program.command('eject <name>')
+    .action((name) => {
+      CurrentModel.remove(name)
+        .subscribe((res) => {
+          if (res) {
+            logger.info('Successfully removed. 🌈');
+          } else {
+            logger.info('Command failed. 🚫');
+          }
+          successCallback();
+        }, (err) => {
+          logger.error(err);
+          errorCallback();
+        });
+    });
+
+  program.help(() => successCallback());
   program.parse(args);
 };

@@ -76,14 +76,17 @@ module.exports = (args, successCallback, errorCallback) => {
         );
     });
 
-  if (!args || args.length === 0) {
+  program.help(() => successCallback());
+
+  if (!args || args.length === 2) {
     logger.info(`use the command : add, remove, list.
         - ${addCmd} : ${addDescription}.
         - ${removeCmd} : ${removeDescription}.
         - ${listCmd} : ${listDescription}.
          
       `);
+    successCallback();
+    return;
   }
-  const arr = [process.argv[0], process.argv[1]].concat(args);
-  program.parse(arr);
+  program.parse(args);
 };
