@@ -6,8 +6,10 @@ const tempDir = require('temp-dir');
 const uuid = require('uuid/v1');
 
 const fileName = 'manginx.json';
+const DEFAULT_NAME = '@manginx/test';
 
 module.exports = {
+  DEFAULT_NAME,
   getConfFileRootDir() {
     return os.homedir();
   },

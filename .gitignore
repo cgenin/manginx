@@ -6,11 +6,12 @@ mocha.json
 coverage
 .nyc_output
 build
-yarn.lock
+cli/yarn.lock
 *.log
 *.ipr
 .tmp
 *.iws
+nginx.pid
 # Sublime Text
 *.sublime-workspace
 

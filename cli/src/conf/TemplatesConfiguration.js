@@ -2,6 +2,7 @@ const path = require('path');
 const Rx = require('rxjs/Rx');
 const fs = require('fs-extra');
 const env = require('../env');
+const TemplatesModel = require('../models/TemplatesModel');
 const Generator = require('../Generator');
 const {createCategoryLogger} = require('../Logger');
 
@@ -21,13 +22,10 @@ class TemplatesConfiguration {
   getTemplates() {
     if (this.usedTemplates.length === 0) {
       logger.info('‼️ No templates selected. Used default instead');
-      const testDefTemplate = path.resolve(env.getInstallDir(), 'servers', 'test.conf');
-      return [{
-        name: 'test',
-        src: testDefTemplate
-      }];
+      return TemplatesModel.find(env.DEFAULT_NAME)
+        .map(defTemplate => [defTemplate]);
     }
-    return this.usedTemplates;
+    return Rx.Observable.of(this.usedTemplates);
   }
 
 
@@ -39,15 +37,15 @@ class TemplatesConfiguration {
 
 
   allTemplates() {
-    const templates = this.getTemplates();
-    return Rx.Observable.from(templates)
+    return this.getTemplates()
+      .flatMap(templates => Rx.Observable.from(templates))
       .flatMap((t) => {
-        const {name, src} = t;
+        const {name, src, ...others} = t;
         logger.info(`generation of template : '${name}'`);
-        const datas = {
+        const datas = Object.assign({
           generateDir: this.targetDirectory,
           installDir: env.getInstallDir()
-        };
+        }, others);
         const filename = getFileName(src);
         const fileNametarget = `${filename}.conf`;
         const targetFilePath = path.resolve(env.templatesDirName(this.targetDirectory), fileNametarget);
@@ -66,5 +64,6 @@ class TemplatesConfiguration {
     );
   }
 }
+
 
 module.exports = TemplatesConfiguration;

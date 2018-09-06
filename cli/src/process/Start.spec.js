@@ -1,7 +1,7 @@
 const sinon = require('sinon');
 const Rx = require('rxjs/Rx');
 const childProcess = require('child_process');
-const TemplatesManager = require('../templates/TemplatesManager');
+const TemplatesManager = require('../TemplatesManager');
 const {expect} = require('chai');
 const Start = require('./Start');
 

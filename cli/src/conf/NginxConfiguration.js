@@ -1,8 +1,8 @@
 const Rx = require('rxjs/Rx');
 const env = require('../env');
 const Templates = require('../models/TemplatesModel');
-const MainConfiguration = require('../conf/MainConfiguration');
-const TemplatesConfiguration = require('../conf/TemplatesConfiguration');
+const MainConfiguration = require('./MainConfiguration');
+const TemplatesConfiguration = require('./TemplatesConfiguration');
 const {createCategoryLogger} = require('../Logger');
 
 const logger = createCategoryLogger('⚙️');

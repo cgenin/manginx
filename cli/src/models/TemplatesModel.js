@@ -1,7 +1,9 @@
 const path = require('path');
 const Rx = require('rxjs/Rx');
 const pathIsAbsolute = require('path-is-absolute');
+const {DEFAULT_NAME} = require('../env');
 const DB = require('../db');
+// const TemplatesConfiguration = require('../conf/TemplatesConfiguration');
 
 const toAbsolutePath = (obj) => {
   if (obj && obj.src && !pathIsAbsolute(obj.src)) {
@@ -25,6 +27,16 @@ module.exports = {
       .flatMap(list => Rx.Observable.from(list));
   },
 
+  find(name) {
+    return this.toArray()
+      .flatMap((arr) => {
+        const obj = arr.find(ob => ob.name === name);
+        if (!obj) {
+          throw new Error(`Template '${name}' not found. Please install it.`);
+        }
+        return Rx.Observable.of(obj);
+      });
+  },
   remove(arg) {
     const rem = name => DB.initialize()
       .map(() => DB.templates())
@@ -38,9 +50,6 @@ module.exports = {
   },
 
   add(obj) {
-    if (obj && obj.name === 'test') {
-      throw new Error('This name is already used by internal management. Sorry. Please change 😅 ');
-    }
     const target = toAbsolutePath(obj);
     return DB.initialize()
       .map(() => DB.templates())

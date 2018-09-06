@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+const cli = require('./src/cli/cli');
+
 const successCallback = () => {
   process.exit();
 };
@@ -8,4 +10,4 @@ const errorCallback = () => {
   process.exit(1);
 };
 
-require('./src/main')(process.argv, successCallback, errorCallback);
+cli(process.argv, successCallback, errorCallback);

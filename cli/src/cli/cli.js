@@ -1,11 +1,11 @@
 /* eslint-disable no-underscore-dangle */
 const program = require('commander');
 const templateCommand = require('./templateCommand');
-const Start = require('./process/Start');
-const Stop = require('./process/Stop');
-const CurrentModel = require('./models/CurrentModel');
-const {createCategoryLogger} = require('./Logger');
-const packageJson = require('../package');
+const Start = require('../process/Start');
+const Stop = require('../process/Stop');
+const CurrentModel = require('../models/CurrentModel');
+const {createCategoryLogger} = require('../Logger');
+const packageJson = require('../../package');
 
 const logger = createCategoryLogger('Manginx');
 
@@ -99,7 +99,25 @@ module.exports = (args, successCallback, errorCallback) => {
         });
     });
 
-  program.command('eject <name>')
+  program.command('used')
+    .action(() => {
+      logger.info('*** Used Templates : *** ');
+      CurrentModel.list()
+        .subscribe(
+          (res) => {
+            console.log(res);
+          }, (err) => {
+            logger.error(err);
+            errorCallback();
+          },
+          () => {
+            logger.info('*** End *** ');
+            successCallback();
+          }
+        );
+    });
+
+  program.command('remove <name>')
     .action((name) => {
       CurrentModel.remove(name)
         .subscribe((res) => {
@@ -115,6 +133,5 @@ module.exports = (args, successCallback, errorCallback) => {
         });
     });
 
-  program.help(() => successCallback());
   program.parse(args);
 };

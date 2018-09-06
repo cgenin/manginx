@@ -46,8 +46,8 @@ describe('TemplatesManager\'s test', () => {
     let index = 1;
     sandbox.stub(TemplatesModel, 'toArray')
       .returns(Rx.Observable.of([]));
-    mock('../conf/MainConfiguration', MainConfigurationMock);
-    mock('../conf/TemplatesConfiguration', TemplatesConfigurationMock);
+    mock('./conf/MainConfiguration', MainConfigurationMock);
+    mock('./conf/TemplatesConfiguration', TemplatesConfigurationMock);
     const TemplatesManager = mock.reRequire('./TemplatesManager');
     TemplatesManager.run()
       .subscribe(

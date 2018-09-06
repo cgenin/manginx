@@ -1,6 +1,7 @@
 const program = require('commander');
-const {createCategoryLogger} = require('./Logger');
-const Templates = require('./models/TemplatesModel');
+const {DEFAULT_NAME} = require('../env');
+const {createCategoryLogger} = require('../Logger');
+const Templates = require('../models/TemplatesModel');
 
 const logger = createCategoryLogger('Template -> ');
 
@@ -20,6 +21,9 @@ module.exports = (args, successCallback, errorCallback) => {
     .command(addCmd)
     .description(addDescription)
     .action((name, confFile) => {
+      if (name === DEFAULT_NAME) {
+        throw new Error('This name is already used by internal management. Sorry. Please change 😅 ');
+      }
       Templates.add({
         name,
         src: confFile
@@ -47,7 +51,10 @@ module.exports = (args, successCallback, errorCallback) => {
       Templates.remove(name)
         .subscribe(
           (t) => {
-            logger.info(`✖︎ '${t}' was successfully removed.`);
+            if (t) {
+              logger.info(`✖︎ '${name}' was successfully removed.`);
+            }
+            successCallback();
           },
           (err) => {
             logger.error(err);
@@ -76,7 +83,6 @@ module.exports = (args, successCallback, errorCallback) => {
         );
     });
 
-  program.help(() => successCallback());
 
   if (!args || args.length === 2) {
     logger.info(`use the command : add, remove, list.

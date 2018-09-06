@@ -1,0 +1,14 @@
+{
+  "name": "@manginx/test",
+  "version": "1.0.0",
+  "description": "defautlt template for @manginx",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "node register.js"
+  },
+  "dependencies": {
+    "@manginx/cli": ">0.0.1"
+  },
+  "author": "",
+  "license": "ISC"
+}
