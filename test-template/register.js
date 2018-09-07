@@ -1,5 +1,5 @@
 const path = require('path');
-const Register = require('@manginx/cli');
+const {Register} = require('@manginx/cli');
 const packageJson = require('./package');
 
 const {name} = packageJson;

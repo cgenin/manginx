@@ -4,6 +4,7 @@ const fs = require('fs-extra');
 const Generator = require('../Generator');
 const env = require('../env');
 
+const CONF_DIRECTORY = 'conf';
 
 class MainConfiguration {
   constructor(targetDirectory) {
@@ -11,7 +12,7 @@ class MainConfiguration {
   }
 
   copyMimeTypes() {
-    const mimeTypeSrcFile = path.resolve(env.getInstallDir(), 'main-conf', 'mime.types');
+    const mimeTypeSrcFile = path.resolve(env.getInstallDir(), env.TEMPLATE_DIRECTORY, CONF_DIRECTORY, 'mime.types');
     const targetFile = this.getMimetypesFilePath();
     const copy = Rx.Observable.bindNodeCallback(fs.copy);
     return copy(mimeTypeSrcFile, targetFile)
@@ -24,7 +25,10 @@ class MainConfiguration {
 
 
   generateMainConfFile() {
-    const mainTemplatePath = path.resolve(env.getInstallDir(), 'main-conf', 'nginx.conf.hbs');
+    const mainTemplatePath = path.resolve(
+      env.getInstallDir(), env.TEMPLATE_DIRECTORY,
+      CONF_DIRECTORY, 'nginx.conf.hbs'
+    );
     const targetFile = this.getMainconfFilePath();
     const datas = {
       generateDir: this.targetDirectory,

@@ -6,9 +6,7 @@
   "scripts": {
     "postinstall": "node register.js"
   },
-  "dependencies": {
-    "@manginx/cli": ">0.0.1"
-  },
+  "dependencies": {},
   "author": "",
   "license": "ISC"
 }

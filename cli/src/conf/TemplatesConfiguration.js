@@ -22,7 +22,7 @@ class TemplatesConfiguration {
   getTemplates() {
     if (this.usedTemplates.length === 0) {
       logger.info('‼️ No templates selected. Used default instead');
-      return TemplatesModel.find(env.DEFAULT_NAME)
+      return TemplatesModel.find(env.DEFAULT_TEMPLATE)
         .map(defTemplate => [defTemplate]);
     }
     return Rx.Observable.of(this.usedTemplates);

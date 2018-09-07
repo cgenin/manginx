@@ -13,7 +13,7 @@ describe('Db\'s test', () => {
   it('test creation db', (done) => {
     const readFile = Rx.Observable.bindNodeCallback(fs.readFile);
     db.initialize(absPath)
-      .delay(20)
+      .delay(db.DELAY_OF_UPDATE)
       .flatMap((d) => {
         expect(d).to.be.not.null;
         expect(d).to.be.an('object');
@@ -59,7 +59,7 @@ describe('Db\'s test', () => {
         expect(template.add({name: 'test', test: 2})).to.be.equal(true);
         return template.list();
       })
-      .delay(20)
+      .delay(db.DELAY_OF_UPDATE)
       .subscribe((res) => {
         expect(res.length).to.be.equal(1);
         const {test, name} = res[0];
@@ -78,7 +78,7 @@ describe('Db\'s test', () => {
         template.add({name: 'doublon', test: 2});
         return template.list();
       })
-      .delay(20)
+      .delay(db.DELAY_OF_UPDATE)
       .subscribe(() => {
         expect(false).to.be.equal(1);
         db.close();
@@ -88,6 +88,39 @@ describe('Db\'s test', () => {
       });
   });
 
+  it('test template does add with null', (done) => {
+    db.initialize(absPath)
+      .map(d => d.templates())
+      .map((template) => {
+        return         template.add();
+      })
+      .subscribe((r) => {
+        expect(r).to.be.equal(false);
+        db.close();
+        done();
+      }, (err) => {
+        expect(err).to.be.instanceOf(Error);
+        done();
+      });
+  });
+
+  it('test template does add with name property', (done) => {
+    db.initialize(absPath)
+      .map(d => d.templates())
+      .map((template) => {
+        return         template.add({});
+      })
+      .subscribe((r) => {
+        expect(r).to.be.equal(false);
+        db.close();
+        done();
+      }, (err) => {
+        expect(err).to.be.instanceOf(Error);
+        done();
+      });
+  });
+
+
   it('test template can remove obj', (done) => {
     db.initialize(absPath)
       .map(d => d.templates())
@@ -95,7 +128,7 @@ describe('Db\'s test', () => {
         expect(template.add({name: 'removal', test: 3})).to.be.equal(true);
         return template;
       })
-      .delay(20)
+      .delay(db.DELAY_OF_UPDATE)
       .map((template) => {
         expect(template.remove({name: 'removal'})).to.be.equal(true);
         expect(template.remove({name: 'removal'})).to.be.equal(true);
@@ -107,6 +140,24 @@ describe('Db\'s test', () => {
         db.close();
         done();
       }, () => {
+        done();
+      });
+  });
+
+  it('test template with remove must called with name', (done) => {
+    db.initialize(absPath)
+      .map(d => d.templates())
+      .map((template) => {
+        template.remove({test: 3});
+        return false;
+      })
+      .subscribe((t) => {
+        expect(t).to.be.equal(true);
+        db.close();
+        done();
+      }, (err) => {
+        expect(err).to.be.instanceOf(Error);
+        db.close();
         done();
       });
   });

@@ -77,6 +77,10 @@ class SingletonColl {
 }
 
 class DB {
+  constructor() {
+    this.DELAY_OF_UPDATE = 20;
+  }
+
   initialize(dbPath) {
     if (instance) {
       return Rx.Observable.of(instance);
@@ -120,7 +124,9 @@ class DB {
   }
 
   close() {
-    this.db.close();
+    if (this.db) {
+      this.db.close();
+    }
   }
 
   getSingleton(collectionName) {

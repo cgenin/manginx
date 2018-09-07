@@ -33,6 +33,39 @@ describe('TemplatesModel\'s test', () => {
       );
   });
 
+  it('should find returns an result', (done) => {
+    sandbox.stub(DB, 'templates')
+      .returns({
+        list: () => [defModel]
+      });
+    TemplatesModel.find(defModel.name)
+      .subscribe(
+        (r) => {
+          expect(r).to.be.equal(defModel);
+          done();
+        },
+        err => done(err)
+      );
+  });
+
+  it('should find returns an error if not found', (done) => {
+    sandbox.stub(DB, 'templates')
+      .returns({
+        list: () => [defModel]
+      });
+    TemplatesModel.find('darkvador')
+      .subscribe(
+        () => {
+          expect(false).to.be.equal(true);
+        },
+        err => {
+          expect(err.message).to.be.string('darkvador');
+          done();
+        }
+      );
+  });
+
+
   it('should list returns an observable of results', (done) => {
     sandbox.stub(DB, 'templates')
       .returns({

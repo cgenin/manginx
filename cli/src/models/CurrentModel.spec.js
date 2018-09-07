@@ -17,6 +17,22 @@ describe('CurrentModel\'s test', () => {
     sandbox.restore();
   });
 
+  it('should toArray returns an array', (done) => {
+    sandbox.stub(DB, 'current')
+      .returns({
+        list: () => [defModel]
+      });
+    CurrentModel.toArray()
+      .subscribe(
+        (arr) => {
+          expect(arr).to.be.an.instanceof(Array);
+          done();
+        },
+        err => done(err)
+      );
+  });
+
+
   it('should add model if ok', (done) => {
     sandbox.stub(DB, 'templates').returns({
       list: () => [defModel]

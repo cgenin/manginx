@@ -3,7 +3,7 @@ const mock = require('mock-require');
 const fs = require('fs-extra');
 const Rx = require('rxjs/Rx');
 const {expect} = require('chai');
-const TemplatesModel = require('../models/TemplatesModel');
+const CurrentModel = require('../models/CurrentModel');
 
 class MainConfigurationMock {
   constructor(targetDirectory) {
@@ -31,7 +31,7 @@ class TemplatesConfigurationMock {
   }
 }
 
-describe('TemplatesManager\'s test', () => {
+describe('NginxConfiguration\'s test', () => {
   let sandbox = null;
   beforeEach(() => {
     sandbox = sinon.createSandbox();
@@ -44,11 +44,11 @@ describe('TemplatesManager\'s test', () => {
 
   it('should run', (done) => {
     let index = 1;
-    sandbox.stub(TemplatesModel, 'toArray')
+    sandbox.stub(CurrentModel, 'toArray')
       .returns(Rx.Observable.of([]));
-    mock('./conf/MainConfiguration', MainConfigurationMock);
-    mock('./conf/TemplatesConfiguration', TemplatesConfigurationMock);
-    const TemplatesManager = mock.reRequire('./TemplatesManager');
+    mock('./MainConfiguration', MainConfigurationMock);
+    mock('./TemplatesConfiguration', TemplatesConfigurationMock);
+    const TemplatesManager = mock.reRequire('./NginxConfiguration');
     TemplatesManager.run()
       .subscribe(
         (res) => {

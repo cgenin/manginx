@@ -1,9 +1,10 @@
 const sinon = require('sinon');
 const Rx = require('rxjs/Rx');
 const childProcess = require('child_process');
-const TemplatesManager = require('../TemplatesManager');
+const TemplatesManager = require('../conf/NginxConfiguration');
 const {expect} = require('chai');
 const Start = require('./Start');
+const DB = require('../db');
 
 const CONST_TESTIF = 'nginx version V1.0.0';
 
@@ -88,7 +89,7 @@ describe('Start\'s test', () => {
       );
   });
 
-  it('should start return true', (done) => {
+  const stubForCallingStart = function () {
     sandbox.stub(childProcess, 'spawn')
       .onFirstCall()
       .returns({
@@ -103,7 +104,10 @@ describe('Start\'s test', () => {
     sandbox.stub(TemplatesManager, 'run')
       .onFirstCall()
       .returns(Rx.Observable.of('test'));
+  };
 
+  it('should start return true', (done) => {
+    stubForCallingStart();
     Start.start()
       .subscribe(
         (res) => {
@@ -111,6 +115,30 @@ describe('Start\'s test', () => {
             .to
             .be
             .equal(true);
+          done();
+        },
+        (err) => {
+          done(err);
+        }
+      );
+  });
+
+  it('should run return true', (done) => {
+    stubForCallingStart();
+    sandbox.stub(DB, 'initialize')
+      .returns(Rx.Observable.of({
+        configuration() {
+          return {
+            state() {
+              return {installedPath: 'test.json'};
+            }
+          };
+        }
+      }));
+    new Start().run()
+      .subscribe(
+        (res) => {
+          expect(res).to.be.equal(true);
           done();
         },
         (err) => {

@@ -30,14 +30,14 @@ describe('TemplatesConfiguration\'s class ', () => {
 
   it('should getTemplates with default when empty array', (done) => {
     sandbox.stub(TemplatesModel, 'find').returns(Rx.Observable.of({
-      name: env.DEFAULT_NAME,
+      name: env.DEFAULT_TEMPLATE,
       src: '/test'
     }));
     new TemplatesConfiguration([], tmpDir).getTemplates()
       .subscribe((array) => {
         expect(array.length).to.be.equal(1);
         const obj = array[0];
-        expect(obj.name).to.be.equal(env.DEFAULT_NAME);
+        expect(obj.name).to.be.equal(env.DEFAULT_TEMPLATE);
         done();
       }, err => done(err));
   });

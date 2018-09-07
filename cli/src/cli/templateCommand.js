@@ -1,7 +1,7 @@
-const program = require('commander');
-const {DEFAULT_NAME} = require('../env');
+const {DEFAULT_TEMPLATE} = require('../env');
 const {createCategoryLogger} = require('../Logger');
 const Templates = require('../models/TemplatesModel');
+const {Command} = require('commander');
 
 const logger = createCategoryLogger('Template -> ');
 
@@ -17,11 +17,12 @@ const listDescription = 'list all registered templates';
 
 
 module.exports = (args, successCallback, errorCallback) => {
+  const program = new Command('subCommandTemplate');
   program
     .command(addCmd)
     .description(addDescription)
     .action((name, confFile) => {
-      if (name === DEFAULT_NAME) {
+      if (name === DEFAULT_TEMPLATE) {
         throw new Error('This name is already used by internal management. Sorry. Please change 😅 ');
       }
       Templates.add({

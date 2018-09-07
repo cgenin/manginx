@@ -1,7 +1,7 @@
 const Rx = require('rxjs/Rx');
 const childProcess = require('child_process');
 const DB = require('../db');
-const TemplatesManager = require('../TemplatesManager');
+const TemplatesManager = require('../conf/NginxConfiguration');
 const {createCategoryLogger} = require('../Logger');
 
 const logger = createCategoryLogger('nginx\'s logs -> ');

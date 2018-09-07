@@ -1,8 +1,8 @@
-const Rx = require('rxjs/Rx');
 const DB = require('../db');
+const Model = require('./Model');
 
 
-module.exports = {
+module.exports = Object.assign(Model(d => d.current()), {
   add(name) {
     return DB.initialize()
       .map(d => d.templates()
@@ -24,13 +24,7 @@ module.exports = {
         const {$loki, meta, ...obj} = template;
         return current.add(obj);
       })
-      .delay(20);
-  },
-  list() {
-    return DB.initialize()
-      .map(d => d.current())
-      .map(current => current.list())
-      .flatMap(arr => Rx.Observable.from(arr));
+      .delay(DB.DELAY_OF_UPDATE);
   },
   remove(name) {
     if (!name) {
@@ -39,6 +33,6 @@ module.exports = {
     return DB.initialize()
       .map(d => d.current())
       .map(current => current.remove(name))
-      .delay(20);
+      .delay(DB.DELAY_OF_UPDATE);
   }
-};
+});

@@ -1,9 +1,9 @@
 const path = require('path');
 const Rx = require('rxjs/Rx');
 const pathIsAbsolute = require('path-is-absolute');
-const {DEFAULT_NAME} = require('../env');
+const Model = require('./Model');
 const DB = require('../db');
-// const TemplatesConfiguration = require('../conf/TemplatesConfiguration');
+
 
 const toAbsolutePath = (obj) => {
   if (obj && obj.src && !pathIsAbsolute(obj.src)) {
@@ -15,18 +15,7 @@ const toAbsolutePath = (obj) => {
 };
 
 
-module.exports = {
-  toArray() {
-    return DB.initialize()
-      .map(() => DB.templates())
-      .map(t => t.list());
-  },
-
-  list() {
-    return this.toArray()
-      .flatMap(list => Rx.Observable.from(list));
-  },
-
+module.exports = Object.assign(Model(d => d.templates()), {
   find(name) {
     return this.toArray()
       .flatMap((arr) => {
@@ -40,7 +29,7 @@ module.exports = {
   remove(arg) {
     const rem = name => DB.initialize()
       .map(() => DB.templates())
-      .map(t => t.remove(name));
+      .map(t => t.remove(name)).delay(DB.DELAY_OF_UPDATE);
     const isString = typeof arg === 'string';
     if (isString) {
       return rem(arg);
@@ -54,6 +43,6 @@ module.exports = {
     return DB.initialize()
       .map(() => DB.templates())
       .map(templates => templates.add(target))
-      .delay(20);
+      .delay(DB.DELAY_OF_UPDATE);
   }
-};
+});

@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-const program = require('commander');
+const {Command} = require('commander');
 const templateCommand = require('./templateCommand');
 const Start = require('../process/Start');
 const Stop = require('../process/Stop');
@@ -10,6 +10,7 @@ const packageJson = require('../../package');
 const logger = createCategoryLogger('Manginx');
 
 module.exports = (args, successCallback, errorCallback) => {
+  const program = new Command('mainCommandLine');
   program
     .version(packageJson.version);
 
@@ -43,7 +44,11 @@ module.exports = (args, successCallback, errorCallback) => {
           if (res) {
             logger.info('All processes stopped. 🌈');
           }
-        }, err => logger.error(err));
+          successCallback();
+        }, (err) => {
+          logger.error(err);
+          errorCallback();
+        });
     });
 
 
@@ -54,7 +59,7 @@ module.exports = (args, successCallback, errorCallback) => {
     .action(() => {
       new Stop().run()
         .flatMap(() => {
-          logger.info('process succefully stopped.');
+          logger.info('process successfully stopped.');
           return new Start().run();
         })
         .catch((err) => {
@@ -78,12 +83,15 @@ module.exports = (args, successCallback, errorCallback) => {
 
   program
     .command('template [otherArgs...]')
+    .description('Command for registering, list or remove templates. tape "template -h" for more information')
     .action((otherArgs) => {
       const arr = [process.argv[0], process.argv[1]].concat(otherArgs);
       templateCommand(arr, successCallback, errorCallback);
     });
 
   program.command('use <name>')
+    .alias('u')
+    .description(' add an template to the next nginx configuration')
     .action((name) => {
       CurrentModel.add(name)
         .subscribe((res) => {
@@ -99,13 +107,15 @@ module.exports = (args, successCallback, errorCallback) => {
         });
     });
 
-  program.command('used')
+  program.command('list')
+    .alias('l')
+    .description('List the used templates')
     .action(() => {
       logger.info('*** Used Templates : *** ');
       CurrentModel.list()
         .subscribe(
           (res) => {
-            console.log(res);
+            logger.info(`*** ${res.name} 🚀`);
           }, (err) => {
             logger.error(err);
             errorCallback();
@@ -117,7 +127,9 @@ module.exports = (args, successCallback, errorCallback) => {
         );
     });
 
-  program.command('remove <name>')
+  program.command('delete <name>')
+    .alias('d')
+    .description('Remove an configuration template')
     .action((name) => {
       CurrentModel.remove(name)
         .subscribe((res) => {

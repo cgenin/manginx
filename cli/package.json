@@ -2,7 +2,7 @@
   "name": "@manginx/cli",
   "version": "0.0.2",
   "description": "An cli manager for nginx : define an template, start/stop nginx's process, template provider.",
-  "main": "src/Register.js",
+  "main": "src/Export.js",
   "scripts": {
     "eslint": "eslint src",
     "coverage": "NODE_ENV=test nyc --all mocha",
