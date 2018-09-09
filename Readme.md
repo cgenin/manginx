@@ -49,8 +49,21 @@ By default, manginx start to the port `8080`. It must be free to test.
 
 You can open your browser to the adress [http://localhost:8080](http://localhost:8080) to see the test page.
 
-    
+# Libraries
+* nginx
+* commander
+* fkill
+* fs-extra  
+* handlebars
+* inquirer
+* lokijs
+* rxjs
+* temp-dir
+* winston
 
+# License
+
+[MIT](License)
 
 
   
