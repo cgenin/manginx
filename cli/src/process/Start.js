@@ -21,6 +21,10 @@ function logOutput(buf) {
 }
 
 class Start {
+  constructor(port) {
+    this.port = port || process.env.MANGINX_PORT || 80;
+  }
+
   static testIfExist(commandName) {
     return Rx.Observable.create((observer) => {
       const nginx = childProcess.spawn(commandName, ['-v']);
@@ -56,23 +60,24 @@ class Start {
     });
   }
 
-  static start(nginxPath) {
+  start(nginxPath) {
     // if current install not defined, try to test if nginx exist in the PATH.
     const commandName = nginxPath || 'nginx';
     if (!nginxPath) {
       logger.info('No Installed nginx found. Used global installation instead.');
     }
     return Start.testIfExist(commandName)
-      .flatMap(c => TemplatesManager.run()
+      .do(() => logger.info(`Use Port : ${this.port}`))
+      .flatMap(c => TemplatesManager.run(this.port)
         .flatMap(confFile => Start.launch(c, confFile)));
   }
 
-  // eslint-disable-next-line class-methods-use-this
   run() {
     return DB.initialize()
       .flatMap((db) => {
-        const conf = db.configuration().state();
-        return Start.start(conf.installedPath);
+        const conf = db.configuration()
+          .state();
+        return this.start(conf.installedPath);
       });
   }
 }

@@ -108,7 +108,7 @@ describe('Start\'s test', () => {
 
   it('should start return true', (done) => {
     stubForCallingStart();
-    Start.start()
+    new Start().start()
       .subscribe(
         (res) => {
           expect(res)

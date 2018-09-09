@@ -14,12 +14,22 @@ module.exports = (args, successCallback, errorCallback) => {
   program
     .version(packageJson.version);
 
+  const getStart = (cmd) => {
+    const {port} = cmd;
+    if (port) {
+      return new Start(port);
+    }
+    return new Start();
+  };
+
   program
     .command('start')
-    .alias('s')
+    .alias('-s')
+    .option('-p, --port <n>', 'Port definition. By default : 80 ', parseInt)
     .description('Start nginx')
-    .action(() => {
-      new Start().run()
+    .action((cmd) => {
+      getStart(cmd)
+        .run()
         .subscribe((res) => {
           if (!res) {
             logger.info('Nginx has failed to start 💥');
@@ -36,7 +46,7 @@ module.exports = (args, successCallback, errorCallback) => {
 
   program
     .command('stop')
-    .alias('k')
+    .alias('-k')
     .description('Stop all nginx process.')
     .action(() => {
       new Stop().run()
@@ -54,13 +64,15 @@ module.exports = (args, successCallback, errorCallback) => {
 
   program
     .command('restart')
-    .alias('r')
+    .alias('-r')
+    .option('-p, --port <n>', 'Port definition. By default : 80 ', parseInt)
     .description('restart the server')
-    .action(() => {
+    .action((cmd) => {
       new Stop().run()
         .flatMap(() => {
           logger.info('process successfully stopped.');
-          return new Start().run();
+          return getStart(cmd)
+            .run();
         })
         .catch((err) => {
           if (err._errors && err._errors[0]) {
@@ -68,7 +80,8 @@ module.exports = (args, successCallback, errorCallback) => {
           } else {
             logger.error(err);
           }
-          return new Start().run();
+          return getStart(cmd)
+            .run();
         })
         .subscribe((res) => {
           if (res) {

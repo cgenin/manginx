@@ -7,19 +7,19 @@ const {createCategoryLogger} = require('../Logger');
 
 const logger = createCategoryLogger('⚙️');
 
-const generateAllTemplates = (targetDirectory, templates) =>
+const generateAllTemplates = (targetDirectory, templates, port) =>
   Rx.Observable.concat(
     new TemplatesConfiguration(templates, targetDirectory).generate(),
-    new MainConfiguration(targetDirectory).generate()
+    new MainConfiguration(targetDirectory, port).generate()
   );
 
 module.exports = {
-  run() {
+  run(port) {
     return env.targetDir()
       .flatMap((targetDirectory) => {
         logger.info(` ✹ Creation of the directory : ${targetDirectory}`);
         return CurrentModel.toArray()
-          .flatMap(templates => generateAllTemplates(targetDirectory, templates));
+          .flatMap(templates => generateAllTemplates(targetDirectory, templates, port));
       })
       .do((fileName) => {
         logger.info(` ✹ creation of ${fileName}`);

@@ -7,8 +7,9 @@ const env = require('../env');
 const CONF_DIRECTORY = 'conf';
 
 class MainConfiguration {
-  constructor(targetDirectory) {
+  constructor(targetDirectory, port) {
     this.targetDirectory = targetDirectory;
+    this.port = port;
   }
 
   copyMimeTypes() {
@@ -25,12 +26,14 @@ class MainConfiguration {
 
 
   generateMainConfFile() {
+    const {port} = this;
     const mainTemplatePath = path.resolve(
       env.getInstallDir(), env.TEMPLATE_DIRECTORY,
       CONF_DIRECTORY, 'nginx.conf.hbs'
     );
     const targetFile = this.getMainconfFilePath();
     const datas = {
+      port,
       generateDir: this.targetDirectory,
       installDir: env.getInstallDir()
     };
