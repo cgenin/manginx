@@ -19,7 +19,7 @@
   ],
   "private": true,
   "author": "christophe genin",
-  "license": "ISC",
+  "license": "MIT",
   "preferGlobal": true,
   "bin": {
     "manginx": "index.js"
