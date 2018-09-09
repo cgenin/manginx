@@ -17,7 +17,6 @@
     "install",
     "uninstall"
   ],
-  "private": true,
   "author": "christophe genin",
   "license": "MIT",
   "preferGlobal": true,
