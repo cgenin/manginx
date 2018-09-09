@@ -1,6 +1,6 @@
 {
   "name": "@manginx/cli",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "An cli manager for nginx : define an template, start/stop nginx's process, template provider.",
   "main": "src/Export.js",
   "scripts": {
