@@ -7,7 +7,7 @@ const uuid = require('uuid/v1');
 
 const fileName = 'manginx.json';
 const DEFAULT_TEMPLATE = '@manginx/test';
-const TEMPLATE_DIRECTORY = 'template';
+const TEMPLATE_DIRECTORY = 'handlebars';
 
 
 module.exports = {
