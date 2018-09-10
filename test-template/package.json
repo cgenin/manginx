@@ -1,12 +1,14 @@
 {
   "name": "@manginx/test",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "defautlt template for @manginx",
   "repository": "https://github.com/cgenin/manginx.git",
   "scripts": {
     "postinstall": "node register.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@manginx/cli": "^0.2.0"
+  },
   "author": "Christophe genin",
   "license": "MIT"
 }

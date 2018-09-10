@@ -1,13 +1,15 @@
 {
   "name": "@manginx/cli",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "An cli manager for nginx : define an template, start/stop nginx's process, template provider.",
   "main": "src/Export.js",
   "repository": "https://github.com/cgenin/manginx.git",
   "scripts": {
     "eslint": "eslint src",
     "coverage": "NODE_ENV=test nyc --all mocha",
-    "test": "NODE_ENV=test mocha"
+    "test": "NODE_ENV=test mocha",
+    "quality": "npm run test && npm run eslint",
+    "prepublish": "npm run quality"
   },
   "keywords": [
     "node",
