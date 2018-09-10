@@ -1,3 +1,4 @@
+/* eslint-disable import/no-dynamic-require,global-require */
 const path = require('path');
 const Rx = require('rxjs/Rx');
 const fs = require('fs-extra');
@@ -12,6 +13,19 @@ const logger = createCategoryLogger('⌨️');
 const getFileName = (fpath) => {
   const extension = path.extname(fpath);
   return path.basename(fpath, extension);
+};
+
+const executeHooks = (original, hooks) => {
+  if (!hooks || hooks.length === 0) {
+    return Rx.Observable.of(original);
+  }
+  const observables = hooks.map((h) => {
+    const relativePath = path.relative(__dirname, h);
+    const mod = require(relativePath);
+    return mod();
+  });
+  return Rx.Observable.concat(...observables)
+    .reduce((acc, o) => Object.assign(acc, o), original);
 };
 
 class TemplatesConfiguration {
@@ -39,21 +53,29 @@ class TemplatesConfiguration {
 
   allTemplates() {
     return this.getTemplates()
-      .flatMap(templates => Rx.Observable.from(templates))
-      .flatMap((t) => {
-        const {name, src, ...others} = t;
-        logger.info(`generation of template : '${name}'`);
-        const datas = Object.assign({
-          generateDir: Templates.pathFormatter(this.targetDirectory),
-          installDir: Templates.pathFormatter(env.getInstallDir())
-        }, others);
-        const filename = getFileName(src);
-        const fileNametarget = `${filename}.conf`;
-        const targetFilePath = path.resolve(env.templatesDirName(this.targetDirectory), fileNametarget);
-        return new Generator(`template:${name}`)
-          .compileFromFile(src)
-          .generate(datas)
-          .toFile(targetFilePath);
+      .flatMap((templates) => {
+        const templatesObs = templates.map((t) => {
+          const {
+            name, src, hooks, ...others
+          } = t;
+          const original = Object.assign({
+            generateDir: Templates.pathFormatter(this.targetDirectory),
+            installDir: Templates.pathFormatter(env.getInstallDir())
+          }, others);
+          const filename = getFileName(src);
+          const fileNametarget = `${filename}.conf`;
+          const targetFilePath = path.resolve(env.templatesDirName(this.targetDirectory), fileNametarget);
+          return Rx.Observable.of(true)
+            .flatMap(() => {
+              logger.info(`generation of template : '${name}'`);
+              return executeHooks(original, hooks)
+                .flatMap(datas => new Generator(`template:${name}`)
+                  .compileFromFile(src)
+                  .generate(datas)
+                  .toFile(targetFilePath));
+            });
+        });
+        return Rx.Observable.concat(...templatesObs);
       });
   }
 
