@@ -1,6 +1,7 @@
 const path = require('path');
 const Rx = require('rxjs/Rx');
 const fs = require('fs-extra');
+const Templates = require('./Templates');
 const Generator = require('../Generator');
 const env = require('../env');
 
@@ -34,8 +35,8 @@ class MainConfiguration {
     const targetFile = this.getMainconfFilePath();
     const datas = {
       port,
-      generateDir: this.targetDirectory,
-      installDir: env.getInstallDir()
+      generateDir: Templates.pathFormatter(this.targetDirectory),
+      installDir: Templates.pathFormatter(env.getInstallDir())
     };
     return new Generator('MainConfiguration')
       .compileFromFile(mainTemplatePath)

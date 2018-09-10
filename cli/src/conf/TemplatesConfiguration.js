@@ -1,6 +1,7 @@
 const path = require('path');
 const Rx = require('rxjs/Rx');
 const fs = require('fs-extra');
+const Templates = require('./Templates');
 const env = require('../env');
 const TemplatesModel = require('../models/TemplatesModel');
 const Generator = require('../Generator');
@@ -43,8 +44,8 @@ class TemplatesConfiguration {
         const {name, src, ...others} = t;
         logger.info(`generation of template : '${name}'`);
         const datas = Object.assign({
-          generateDir: this.targetDirectory,
-          installDir: env.getInstallDir()
+          generateDir: Templates.pathFormatter(this.targetDirectory),
+          installDir: Templates.pathFormatter(env.getInstallDir())
         }, others);
         const filename = getFileName(src);
         const fileNametarget = `${filename}.conf`;

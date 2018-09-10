@@ -6,7 +6,9 @@
   "scripts": {
     "postinstall": "node register.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@manginx/cli":"^0.2.0"
+  },
   "author": "Your name",
   "license": "MIT"
 }

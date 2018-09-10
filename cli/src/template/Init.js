@@ -3,6 +3,7 @@ const klaw = require('klaw');
 const fs = require('fs-extra');
 const Rx = require('rxjs/Rx');
 const {iif} = require('rxjs');
+const {exec} = require('child_process');
 const env = require('../env');
 const Generator = require('../Generator');
 const {createCategoryLogger} = require('../Logger');
@@ -51,11 +52,33 @@ class Init {
       ));
   }
 
+  static install(createdDirectory) {
+    return Rx.Observable.create((observer) => {
+      const cmd = exec('npm install', {
+        cwd: createdDirectory,
+        maxBuffer: 200 * 1024
+      }, (error) => {
+        if (error) {
+          observer.error(error);
+        } else {
+          observer.complete();
+        }
+      });
+
+      const consoleOutput = (msg) => {
+        logger.info(`npm: ${msg}`);
+      };
+      cmd.stdout.on('data', consoleOutput);
+      cmd.stderr.on('data', consoleOutput);
+    });
+  }
+
   run() {
     return this.createDir()
       .flatMap(createdDirectory => Rx.Observable.concat(
         Rx.Observable.of(createdDirectory),
-        this.copyFiles(createdDirectory)
+        this.copyFiles(createdDirectory),
+        Init.install(createdDirectory)
       ));
   }
 

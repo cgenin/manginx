@@ -8,11 +8,14 @@ const uuid = require('uuid/v1');
 const fileName = 'manginx.json';
 const DEFAULT_TEMPLATE = '@manginx/test';
 const TEMPLATE_DIRECTORY = 'handlebars';
-
+const isWin = process.platform === 'win32';
 
 module.exports = {
   DEFAULT_TEMPLATE,
   TEMPLATE_DIRECTORY,
+  isWin() {
+    return isWin;
+  },
   getConfFileRootDir() {
     return os.homedir();
   },
@@ -31,4 +34,5 @@ module.exports = {
     return mkdirs(absPath)
       .map(() => absPath);
   }
+
 };
