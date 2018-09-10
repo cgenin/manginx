@@ -48,7 +48,7 @@ $ manginx start
 
 By default, manginx start to the port `80`. It must be free to test. 
 
-You can open your browser to the adress [http://localhost:8080](http://localhost) to see the test page.
+You can open your browser to the adress [http://localhost](http://localhost) to see the test page.
 
 
 
