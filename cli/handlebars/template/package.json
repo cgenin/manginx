@@ -1,0 +1,12 @@
+{
+  "name": "{{namePackage}}",
+  "version": "1.0.0",
+  "description": "",
+  "repository": "",
+  "scripts": {
+    "postinstall": "node register.js"
+  },
+  "dependencies": {},
+  "author": "Your name",
+  "license": "MIT"
+}

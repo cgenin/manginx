@@ -1,6 +1,7 @@
 const {DEFAULT_TEMPLATE} = require('../env');
 const {createCategoryLogger} = require('../Logger');
 const Templates = require('../models/TemplatesModel');
+const Init = require('../template/Init');
 const {Command} = require('commander');
 
 const logger = createCategoryLogger('Template -> ');
@@ -14,6 +15,9 @@ const removeDescription = 'Remove an template';
 
 const listCmd = 'list';
 const listDescription = 'list all registered templates';
+
+const initCmd = 'init <name>';
+const initDescription = 'Initalize an module template';
 
 
 module.exports = (args, successCallback, errorCallback) => {
@@ -63,6 +67,31 @@ module.exports = (args, successCallback, errorCallback) => {
           }
         );
     });
+
+
+  program
+    .command(initCmd)
+    .description(initDescription)
+    .action((name) => {
+      new Init(name).run()
+        .subscribe(
+          (t) => {
+            logger.info(` * Creation of '${t}'`);
+          },
+          (err) => {
+            logger.error(err);
+            errorCallback();
+          },
+          () => {
+            logger.info(' * End of the creation. ');
+            logger.info('Please execute these commands for initializing the project :  ');
+            logger.info(`$ cd  ${name}`);
+            logger.info('$ npm install');
+            successCallback();
+          }
+        );
+    });
+
   program
     .command(listCmd)
     .description(listDescription)

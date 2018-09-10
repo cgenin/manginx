@@ -6,6 +6,7 @@ mocha.json
 coverage
 .nyc_output
 build
+essai
 cli/yarn.lock
 *.log
 *.ipr
