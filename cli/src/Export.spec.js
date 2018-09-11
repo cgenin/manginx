@@ -4,11 +4,14 @@ const {throwError} = require('rxjs');
 const {expect} = require('chai');
 const TemplatesModel = require('./models/TemplatesModel');
 const {Register} = require('./Export');
+const db = require('./db');
 
 describe('Export\'s test', () => {
   let sandbox = null;
   beforeEach(() => {
     sandbox = sinon.createSandbox();
+    sandbox.stub(db, 'initialize').returns(Rx.Observable.of({}));
+
   });
 
   afterEach(() => {

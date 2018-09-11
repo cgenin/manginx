@@ -27,7 +27,8 @@ describe('Db\'s test', () => {
   });
 
   it('test set conf data', (done) => {
-    db.initialize(absPath).map(d => d.configuration())
+    db.initialize(absPath)
+      .map(d => d.configuration())
       .map((conf) => {
         expect(conf.state()).to.be.not.null;
         expect(conf.state()).to.be.not.undefined;
@@ -43,7 +44,8 @@ describe('Db\'s test', () => {
   });
 
   it('test current data', (done) => {
-    db.initialize(absPath).map(d => d.current())
+    db.initialize(absPath)
+      .map(d => d.current())
       .subscribe((conf) => {
         expect(conf.list()).to.be.empty;
         db.close();

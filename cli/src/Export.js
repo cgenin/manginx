@@ -38,7 +38,8 @@ class Register {
       throw new Error('You must provide at least one template');
     }
     console.log('*** Add manginx\'s templates : ***');
-    this.addAll(args)
+    DB.initialize()
+      .flatMap(() => this.addAll(args))
       .subscribe(
         ({name, added}) => console.log(`*** Template '${name}' - added : ${(added) ? '🏆' : '🤮'} ***`),
         (err) => {
