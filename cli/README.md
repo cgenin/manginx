@@ -50,7 +50,9 @@ By default, manginx start to the port `80`. It must be free to test.
 
 You can open your browser to the adress [http://localhost](http://localhost) to see the test page.
 
+## Command line options
 
+[The command line options description](./doc/cli.md)
 
 # Libraries
 * nginx
