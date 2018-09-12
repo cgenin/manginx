@@ -1,17 +1,18 @@
 const path = require('path');
-const { Observable } = require('rxjs/Rx');
+const {Observable} = require('rxjs/Rx');
 const fs = require('fs-extra');
 const Templates = require('./Templates');
 const Generator = require('../Generator');
 const env = require('../env');
 
 const CONF_DIRECTORY = 'conf';
-const { bindNodeCallback, concat } = Observable;
+const {bindNodeCallback, concat} = Observable;
 
 class MainConfiguration {
-  constructor(targetDirectory, port) {
+  constructor(targetDirectory, port, templates) {
     this.targetDirectory = targetDirectory;
     this.port = port;
+    this.templates = templates;
   }
 
   copyMimeTypes() {
@@ -34,8 +35,13 @@ class MainConfiguration {
       CONF_DIRECTORY, 'nginx.conf.hbs'
     );
     const targetFile = this.getMainconfFilePath();
+    const modulesConfPaths = this.templates
+      .map(({src}) => path.basename(src))
+      .map(basename => path.resolve(env.templatesDirName(this.targetDirectory), basename))
+      .map(p => Templates.pathFormatter(p));
     const datas = {
       port,
+      modulesConfPaths,
       generateDir: Templates.pathFormatter(this.targetDirectory),
       installDir: Templates.pathFormatter(env.getInstallDir())
     };

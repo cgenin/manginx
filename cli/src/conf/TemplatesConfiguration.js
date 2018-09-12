@@ -1,6 +1,6 @@
 /* eslint-disable import/no-dynamic-require,global-require */
 const path = require('path');
-const { Observable } = require('rxjs/Rx');
+const {Observable} = require('rxjs/Rx');
 const fs = require('fs-extra');
 const Templates = require('./Templates');
 const env = require('../env');
@@ -9,7 +9,7 @@ const Generator = require('../Generator');
 const {createCategoryLogger} = require('../Logger');
 
 const logger = createCategoryLogger('⌨️');
-const { bindNodeCallback, concat, of } = Observable;
+const {bindNodeCallback, concat, of} = Observable;
 
 const getFileName = (fpath) => {
   const extension = path.extname(fpath);
@@ -55,27 +55,29 @@ class TemplatesConfiguration {
   allTemplates() {
     return this.getTemplates()
       .flatMap((templates) => {
-        const templatesObs = templates.map((t) => {
-          const {
-            name, src, hooks, ...others
-          } = t;
-          const original = Object.assign({
-            generateDir: Templates.pathFormatter(this.targetDirectory),
-            installDir: Templates.pathFormatter(env.getInstallDir())
-          }, others);
-          const filename = getFileName(src);
-          const fileNametarget = `${filename}.conf`;
-          const targetFilePath = path.resolve(env.templatesDirName(this.targetDirectory), fileNametarget);
-          return of(true)
-            .flatMap(() => {
-              logger.info(`generation of template : '${name}'`);
-              return executeHooks(original, hooks)
-                .flatMap(datas => new Generator(`template:${name}`)
-                  .compileFromFile(src)
-                  .generate(datas)
-                  .toFile(targetFilePath));
-            });
-        });
+        const templatesObs = templates
+          .map((t) => {
+            const {
+              name, src, hooks, templateDir, ...others
+            } = t;
+            const original = Object.assign({
+              generateDir: Templates.pathFormatter(this.targetDirectory),
+              installDir: Templates.pathFormatter(env.getInstallDir()),
+              templateDir: Templates.pathFormatter(templateDir)
+            }, others);
+            const filename = getFileName(src);
+            const fileNametarget = `${filename}.conf`;
+            const targetFilePath = path.resolve(env.templatesDirName(this.targetDirectory), fileNametarget);
+            return of(true)
+              .flatMap(() => {
+                logger.info(`generation of template : '${name}'`);
+                return executeHooks(original, hooks)
+                  .flatMap(datas => new Generator(`template:${name}`)
+                    .compileFromFile(src)
+                    .generate(datas)
+                    .toFile(targetFilePath));
+              });
+          });
         return concat(...templatesObs);
       });
   }

@@ -15,8 +15,7 @@ const portCommand = '-p, --port <n>';
 module.exports = (args, successCallback, errorCallback) => {
   const program = new Command('manginx');
   program
-    .version(packageJson.version)
-    .option(portCommand, portDescription, parseInt);
+    .version(packageJson.version);
 
   const getStart = (cmd) => {
     const {port} = cmd;
@@ -29,6 +28,7 @@ module.exports = (args, successCallback, errorCallback) => {
   program
     .command('start')
     .alias('-s')
+    .option(portCommand, portDescription, parseInt)
     .description('Start nginx')
     .action((cmd) => {
       getStart(cmd)
@@ -68,6 +68,7 @@ module.exports = (args, successCallback, errorCallback) => {
   program
     .command('restart')
     .alias('-r')
+    .option(portCommand, portDescription, parseInt)
     .description('restart the server')
     .action((cmd) => {
       new Stop().run()

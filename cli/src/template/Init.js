@@ -64,8 +64,7 @@ class Init {
       .map(p => p.replace(TEMPLATE_HANDLEBARS, ''))
       .map(addedDir => path.resolve(createdDirectory, `.${addedDir}`))
       .flatMap(dir2create => ensureDir(dir2create)
-        .map(() => dir2create)
-      );
+        .map(() => dir2create));
   }
 
   generateTemplate(createdDirectory, item) {

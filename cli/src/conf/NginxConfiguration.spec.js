@@ -33,6 +33,17 @@ class TemplatesConfigurationMock {
   }
 }
 
+class WindowsRequiredDirsMock {
+  constructor(targetDirectory) {
+    expect(fs.pathExistsSync(targetDirectory))
+      .to.be.equal(true);
+  }
+
+  generate() {
+    return of('test3');
+  }
+}
+
 describe('NginxConfiguration\'s test', () => {
   let sandbox = null;
   beforeEach(() => {
@@ -50,6 +61,7 @@ describe('NginxConfiguration\'s test', () => {
       .returns(of([]));
     mock('./MainConfiguration', MainConfigurationMock);
     mock('./TemplatesConfiguration', TemplatesConfigurationMock);
+    mock('./WindowsRequiredDirs', WindowsRequiredDirsMock);
     const TemplatesManager = mock.reRequire('./NginxConfiguration');
     TemplatesManager.run()
       .subscribe(

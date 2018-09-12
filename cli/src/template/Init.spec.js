@@ -8,6 +8,8 @@ const {expect} = require('chai');
 const Init = require('./Init');
 const Npm = require('../process/Npm');
 
+const namePackage = 'dark-vador';
+
 describe('Init\'s test', () => {
   let sandbox = null;
   beforeEach(() => {
@@ -18,10 +20,19 @@ describe('Init\'s test', () => {
     sandbox.restore();
   });
 
+  it('should init be ok when dir not exists', (done) => {
+    sandbox.stub(Npm, 'install').returns(Observable.of('mock'));
+    new Init(namePackage, '/tyty/not/exists').run()
+      .subscribe(pathCreated => {
+
+        },
+        err => done(),
+        () => done(new Error('not ok')));
+  });
+
   it('should init', (done) => {
     sandbox.stub(Npm, 'install').returns(Observable.of('mock'));
     const targetDirectory = path.resolve(tempDir, `test${uuid()}`);
-    let namePackage = 'dark-vador';
     new Init(namePackage, targetDirectory).run()
       .subscribe(pathCreated => {
           if (pathCreated !== 'mock' ) {
