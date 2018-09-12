@@ -1,6 +1,6 @@
 /* eslint-disable import/no-dynamic-require,global-require */
 const path = require('path');
-const Rx = require('rxjs/Rx');
+const { Observable } = require('rxjs/Rx');
 const fs = require('fs-extra');
 const Templates = require('./Templates');
 const env = require('../env');
@@ -9,6 +9,7 @@ const Generator = require('../Generator');
 const {createCategoryLogger} = require('../Logger');
 
 const logger = createCategoryLogger('⌨️');
+const { bindNodeCallback, concat, of } = Observable;
 
 const getFileName = (fpath) => {
   const extension = path.extname(fpath);
@@ -17,14 +18,14 @@ const getFileName = (fpath) => {
 
 const executeHooks = (original, hooks) => {
   if (!hooks || hooks.length === 0) {
-    return Rx.Observable.of(original);
+    return of(original);
   }
   const observables = hooks.map((h) => {
     const relativePath = path.relative(__dirname, h);
     const mod = require(relativePath);
     return mod();
   });
-  return Rx.Observable.concat(...observables)
+  return concat(...observables)
     .reduce((acc, o) => Object.assign(acc, o), original);
 };
 
@@ -40,13 +41,13 @@ class TemplatesConfiguration {
       return TemplatesModel.find(env.DEFAULT_TEMPLATE)
         .map(defTemplate => [defTemplate]);
     }
-    return Rx.Observable.of(this.usedTemplates);
+    return of(this.usedTemplates);
   }
 
 
   createTemplatesDirectory() {
-    const mkdirs = Rx.Observable.bindNodeCallback(fs.mkdirs);
-    return Rx.Observable.of(env.templatesDirName(this.targetDirectory))
+    const mkdirs = bindNodeCallback(fs.mkdirs);
+    return of(env.templatesDirName(this.targetDirectory))
       .flatMap(dir => mkdirs(dir));
   }
 
@@ -65,7 +66,7 @@ class TemplatesConfiguration {
           const filename = getFileName(src);
           const fileNametarget = `${filename}.conf`;
           const targetFilePath = path.resolve(env.templatesDirName(this.targetDirectory), fileNametarget);
-          return Rx.Observable.of(true)
+          return of(true)
             .flatMap(() => {
               logger.info(`generation of template : '${name}'`);
               return executeHooks(original, hooks)
@@ -75,13 +76,13 @@ class TemplatesConfiguration {
                   .toFile(targetFilePath));
             });
         });
-        return Rx.Observable.concat(...templatesObs);
+        return concat(...templatesObs);
       });
   }
 
   generate() {
     logger.info('launched...');
-    return Rx.Observable.concat(
+    return concat(
       this.createTemplatesDirectory(),
       this.allTemplates()
     );

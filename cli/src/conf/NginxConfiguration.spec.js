@@ -1,9 +1,11 @@
 const sinon = require('sinon');
 const mock = require('mock-require');
 const fs = require('fs-extra');
-const Rx = require('rxjs/Rx');
+const { Observable } = require('rxjs/Rx');
 const {expect} = require('chai');
 const CurrentModel = require('../models/CurrentModel');
+
+const { of } = Observable;
 
 class MainConfigurationMock {
   constructor(targetDirectory) {
@@ -15,7 +17,7 @@ class MainConfigurationMock {
   }
 
   generate() {
-    return Rx.Observable.of('test2');
+    return of('test2');
   }
 }
 
@@ -27,7 +29,7 @@ class TemplatesConfigurationMock {
   }
 
   generate() {
-    return Rx.Observable.of('test1');
+    return of('test1');
   }
 }
 
@@ -45,7 +47,7 @@ describe('NginxConfiguration\'s test', () => {
   it('should run', (done) => {
     let index = 1;
     sandbox.stub(CurrentModel, 'toArray')
-      .returns(Rx.Observable.of([]));
+      .returns(of([]));
     mock('./MainConfiguration', MainConfigurationMock);
     mock('./TemplatesConfiguration', TemplatesConfigurationMock);
     const TemplatesManager = mock.reRequire('./NginxConfiguration');

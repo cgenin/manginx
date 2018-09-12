@@ -1,11 +1,12 @@
 const path = require('path');
-const Rx = require('rxjs/Rx');
+const { Observable } = require('rxjs/Rx');
 const fs = require('fs-extra');
 const Templates = require('./Templates');
 const Generator = require('../Generator');
 const env = require('../env');
 
 const CONF_DIRECTORY = 'conf';
+const { bindNodeCallback, concat } = Observable;
 
 class MainConfiguration {
   constructor(targetDirectory, port) {
@@ -16,7 +17,7 @@ class MainConfiguration {
   copyMimeTypes() {
     const mimeTypeSrcFile = path.resolve(env.getInstallDir(), env.TEMPLATE_DIRECTORY, CONF_DIRECTORY, 'mime.types');
     const targetFile = this.getMimetypesFilePath();
-    const copy = Rx.Observable.bindNodeCallback(fs.copy);
+    const copy = bindNodeCallback(fs.copy);
     return copy(mimeTypeSrcFile, targetFile)
       .map(() => targetFile);
   }
@@ -49,7 +50,7 @@ class MainConfiguration {
   }
 
   generate() {
-    return Rx.Observable.concat(
+    return concat(
       this.copyMimeTypes(),
       this.generateMainConfFile()
     );

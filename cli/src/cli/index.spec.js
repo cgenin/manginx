@@ -1,19 +1,21 @@
 const sinon = require('sinon');
-const Rx = require('rxjs/Rx');
+const { Observable } = require('rxjs/Rx');
 const {throwError} = require('rxjs');
 const mock = require('mock-require');
 const {expect} = require('chai');
 const CurrentModel = require('../models/CurrentModel');
 const command = require('./index');
 
+const { of } = Observable;
+
 describe('cli\'s test', () => {
 
   function ko() {
-    return {run: () => Rx.Observable.of(false)};
+    return {run: () => of(false)};
   }
 
   function ok() {
-    return {run: () => Rx.Observable.of(true)};
+    return {run: () => of(true)};
   }
 
   function error() {
@@ -134,7 +136,7 @@ describe('cli\'s test', () => {
 
   it('should OK when list used template', (done) => {
     sandbox.stub(CurrentModel, 'list')
-      .returns(Rx.Observable.of({name: 'test'}));
+      .returns(of({name: 'test'}));
     command(['node', 'index.js', 'list'], () => done(), err => done(err));
   });
 
@@ -151,12 +153,12 @@ describe('cli\'s test', () => {
 
   it('should OK current when add an template', (done) => {
     sandbox.stub(CurrentModel, 'add')
-      .returns(Rx.Observable.of(true));
+      .returns(of(true));
     command(['node', 'index.js', 'use', 'test'], () => done(), err => done(err));
   });
   it('should OK current when add an template which does not exist', (done) => {
     sandbox.stub(CurrentModel, 'add')
-      .returns(Rx.Observable.of(false));
+      .returns(of(false));
     command(['node', 'index.js', 'use', 'test'], () => done(), err => done(err));
   });
   it('should OK current when add an template with error', (done) => {
@@ -171,12 +173,12 @@ describe('cli\'s test', () => {
 
   it('should OK current when remove an used template', (done) => {
     sandbox.stub(CurrentModel, 'remove')
-      .returns(Rx.Observable.of(true));
+      .returns(of(true));
     command(['node', 'index.js', 'delete', 'test'], () => done(), err => done(err));
   });
   it('should OK current when remove an used template which does not exist', (done) => {
     sandbox.stub(CurrentModel, 'remove')
-      .returns(Rx.Observable.of(false));
+      .returns(of(false));
     command(['node', 'index.js', 'delete', 'test'], () => done(), err => done(err));
   });
   it('should OK current when remove an used template with error', (done) => {

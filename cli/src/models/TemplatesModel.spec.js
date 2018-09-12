@@ -1,9 +1,9 @@
 const sinon = require('sinon');
-const Rx = require('rxjs/Rx');
+const { Observable } = require('rxjs/Rx');
 const {expect} = require('chai');
 const TemplatesModel = require('./TemplatesModel');
 const DB = require('../db');
-
+const { of } = Observable;
 const defModel = {name: 'essai', src: 'Path'};
 
 describe('TemplatesModel\'s test', () => {
@@ -11,7 +11,7 @@ describe('TemplatesModel\'s test', () => {
   beforeEach(() => {
     sandbox = sinon.createSandbox();
     sandbox.stub(DB, 'initialize')
-      .returns(Rx.Observable.of(DB));
+      .returns(of(DB));
   });
 
   afterEach(() => {

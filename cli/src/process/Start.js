@@ -1,10 +1,11 @@
-const Rx = require('rxjs/Rx');
+const { Observable } = require('rxjs/Rx');
 const childProcess = require('child_process');
 const DB = require('../db');
 const TemplatesManager = require('../conf/NginxConfiguration');
 const {createCategoryLogger} = require('../Logger');
 
 const logger = createCategoryLogger('nginx\'s logs -> ');
+const { create } = Observable;
 
 function logOutput(buf) {
   const lines = buf.toString()
@@ -26,7 +27,7 @@ class Start {
   }
 
   static testIfExist(commandName) {
-    return Rx.Observable.create((observer) => {
+    return create((observer) => {
       const nginx = childProcess.spawn(commandName, ['-v']);
       nginx.stdout.on('data', logOutput);
       nginx.stderr.on('data', logOutput);
@@ -44,7 +45,7 @@ class Start {
   }
 
   static launch(command, confFile) {
-    return Rx.Observable.create((observer) => {
+    return create((observer) => {
       let started = false;
       const nginx = childProcess.spawn(command, ['-c', confFile]);
       nginx.stdout.on('data', logOutput);

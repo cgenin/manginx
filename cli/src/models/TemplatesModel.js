@@ -1,9 +1,10 @@
 const path = require('path');
-const Rx = require('rxjs/Rx');
+const { Observable } = require('rxjs/Rx');
 const pathIsAbsolute = require('path-is-absolute');
 const Model = require('./Model');
 const DB = require('../db');
 
+const { of } = Observable;
 
 const toAbsolutePath = (obj) => {
   if (obj && obj.src && !pathIsAbsolute(obj.src)) {
@@ -23,7 +24,7 @@ module.exports = Object.assign(Model(d => d.templates()), {
         if (!obj) {
           throw new Error(`Template '${name}' not found. Please install it.`);
         }
-        return Rx.Observable.of(obj);
+        return of(obj);
       });
   },
   remove(arg) {

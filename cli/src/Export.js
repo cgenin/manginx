@@ -1,5 +1,5 @@
 const path = require('path');
-const Rx = require('rxjs/Rx');
+const { Observable } = require('rxjs/Rx');
 const TemplatesModel = require('./models/TemplatesModel');
 const DB = require('./db');
 
@@ -30,7 +30,7 @@ class Register {
 
   addAll(array) {
     const observables = array.map(o => this.add(o));
-    return Rx.Observable.concat(...observables);
+    return Observable.concat(...observables);
   }
 
   run(...args) {

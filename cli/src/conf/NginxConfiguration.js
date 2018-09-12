@@ -1,4 +1,4 @@
-const Rx = require('rxjs/Rx');
+const { Observable } = require('rxjs/Rx');
 const env = require('../env');
 const CurrentModel = require('../models/CurrentModel');
 const MainConfiguration = require('./MainConfiguration');
@@ -6,9 +6,10 @@ const TemplatesConfiguration = require('./TemplatesConfiguration');
 const {createCategoryLogger} = require('../Logger');
 
 const logger = createCategoryLogger('⚙️');
+const { concat } = Observable;
 
 const generateAllTemplates = (targetDirectory, templates, port) =>
-  Rx.Observable.concat(
+  concat(
     new TemplatesConfiguration(templates, targetDirectory).generate(),
     new MainConfiguration(targetDirectory, port).generate()
   );

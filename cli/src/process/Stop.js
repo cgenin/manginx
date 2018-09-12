@@ -1,4 +1,4 @@
-const Rx = require('rxjs/Rx');
+const { Observable } = require('rxjs/Rx');
 const fkill = require('fkill');
 
 class Stop {
@@ -7,7 +7,7 @@ class Stop {
   }
   // eslint-disable-next-line class-methods-use-this
   run() {
-    return Rx.Observable.fromPromise(this.killer('nginx'))
+    return Observable.fromPromise(this.killer('nginx'))
       .map(() => true);
   }
 }

@@ -1,6 +1,6 @@
 const path = require('path');
 const sinon = require('sinon');
-const Rx = require('rxjs/Rx');
+const { Observable } = require('rxjs/Rx');
 const tempDir = require('temp-dir');
 const uuid = require('uuid/v1');
 const fs = require('fs-extra');
@@ -8,7 +8,7 @@ const {expect} = require('chai');
 const env = require('../env');
 const TemplatesModel = require('../models/TemplatesModel');
 const TemplatesConfiguration = require('./TemplatesConfiguration');
-
+const { of } = Observable;
 
 describe('TemplatesConfiguration\'s class ', () => {
   const src = path.resolve(__filename, '..', 'test.conf');
@@ -29,7 +29,7 @@ describe('TemplatesConfiguration\'s class ', () => {
   });
 
   it('should getTemplates with default when empty array', (done) => {
-    sandbox.stub(TemplatesModel, 'find').returns(Rx.Observable.of({
+    sandbox.stub(TemplatesModel, 'find').returns(of({
       name: env.DEFAULT_TEMPLATE,
       src: '/test'
     }));

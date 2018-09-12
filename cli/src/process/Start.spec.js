@@ -1,5 +1,5 @@
 const sinon = require('sinon');
-const Rx = require('rxjs/Rx');
+const { Observable } = require('rxjs/Rx');
 const childProcess = require('child_process');
 const TemplatesManager = require('../conf/NginxConfiguration');
 const {expect} = require('chai');
@@ -7,7 +7,7 @@ const Start = require('./Start');
 const DB = require('../db');
 
 const CONST_TESTIF = 'nginx version V1.0.0';
-
+const { of } = Observable;
 
 describe('Start\'s test', () => {
   let sandbox = null;
@@ -103,7 +103,7 @@ describe('Start\'s test', () => {
       });
     sandbox.stub(TemplatesManager, 'run')
       .onFirstCall()
-      .returns(Rx.Observable.of('test'));
+      .returns(of('test'));
   };
 
   it('should start return true', (done) => {
@@ -126,7 +126,7 @@ describe('Start\'s test', () => {
   it('should run return true', (done) => {
     stubForCallingStart();
     sandbox.stub(DB, 'initialize')
-      .returns(Rx.Observable.of({
+      .returns(of({
         configuration() {
           return {
             state() {

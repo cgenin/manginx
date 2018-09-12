@@ -1,7 +1,8 @@
 const Handlebars = require('handlebars');
-const Rx = require('rxjs/Rx');
+const { Observable } = require('rxjs/Rx');
 const fs = require('fs-extra');
 
+const { bindNodeCallback, of } = Observable;
 const TEMPLATES = {};
 
 class Generator {
@@ -36,11 +37,11 @@ class Generator {
     if (!this.result) {
       throw new Error('you must call generate\'s method before');
     }
-    return Rx.Observable.of(this.result);
+    return of(this.result);
   }
 
   toFile(filePath) {
-    const outputFile = Rx.Observable.bindNodeCallback(fs.outputFile);
+    const outputFile = bindNodeCallback(fs.outputFile);
     return this.toText()
       .flatMap(t => outputFile(filePath, t))
       .map(() => filePath);

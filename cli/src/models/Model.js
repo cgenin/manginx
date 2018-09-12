@@ -1,5 +1,7 @@
-const Rx = require('rxjs/Rx');
+const { Observable } = require('rxjs/Rx');
 const DB = require('../db');
+
+const { from } = Observable;
 
 module.exports = mapFunc => ({
   toArray() {
@@ -10,6 +12,6 @@ module.exports = mapFunc => ({
 
   list() {
     return this.toArray()
-      .flatMap(list => Rx.Observable.from(list));
+      .flatMap(list => from(list));
   }
 });
