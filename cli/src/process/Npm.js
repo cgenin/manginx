@@ -1,14 +1,14 @@
-const { Observable } = require('rxjs/Rx');
-const {exec} = require('child_process');
+const {Observable} = require('rxjs/Rx');
+const childProcess = require('child_process');
 const {createCategoryLogger} = require('../Logger');
 
 const logger = createCategoryLogger('npm:');
 const {
   create
 } = Observable;
-
+const COMMAND_INSTALL = 'npm install';
 const install = createdDirectory => create((observer) => {
-  const cmd = exec('npm install', {
+  const cmd = childProcess.exec(COMMAND_INSTALL, {
     cwd: createdDirectory,
     maxBuffer: 200 * 1024
   }, (error) => {
@@ -23,4 +23,7 @@ const install = createdDirectory => create((observer) => {
   cmd.stderr.on('data', msg => logger.error(msg));
 });
 
-module.exports = {install};
+module.exports = {
+  install,
+  COMMAND_INSTALL
+};
