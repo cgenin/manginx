@@ -12,8 +12,8 @@ const { concat } = Observable;
 const generateAllTemplates = (targetDirectory, templates, port) =>
   concat(
     new TemplatesConfiguration(templates, targetDirectory).generate(),
+    new WindowsRequiredDirs(targetDirectory).generate(),
     new MainConfiguration(targetDirectory, port, templates).generate(),
-    new WindowsRequiredDirs(targetDirectory).generate()
   );
 
 module.exports = {

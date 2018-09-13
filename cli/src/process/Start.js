@@ -1,11 +1,12 @@
-const { Observable } = require('rxjs/Rx');
+const {Observable} = require('rxjs/Rx');
+const path = require('path');
 const childProcess = require('child_process');
 const DB = require('../db');
-const TemplatesManager = require('../conf/NginxConfiguration');
+const NginxConfiguration = require('../conf/NginxConfiguration');
 const {createCategoryLogger} = require('../Logger');
 
 const logger = createCategoryLogger('nginx\'s logs -> ');
-const { create } = Observable;
+const {create} = Observable;
 
 function logOutput(buf) {
   const lines = buf.toString()
@@ -45,9 +46,10 @@ class Start {
   }
 
   static launch(command, confFile) {
+    const cwd = path.resolve(confFile, '..');
     return create((observer) => {
       let started = false;
-      const nginx = childProcess.spawn(command, ['-c', confFile]);
+      const nginx = childProcess.spawn(command, ['-c', confFile], {cwd, detached: true});
       nginx.stdout.on('data', logOutput);
       nginx.stderr.on('data', logOutput);
       nginx.stderr.on('data', (buff) => {
@@ -69,8 +71,12 @@ class Start {
     }
     return Start.testIfExist(commandName)
       .do(() => logger.info(`Use Port : ${this.port}`))
-      .flatMap(c => TemplatesManager.run(this.port)
-        .flatMap(confFile => Start.launch(c, confFile)));
+      .flatMap(c => NginxConfiguration.run(this.port)
+        .last()
+        .flatMap((confFile) => {
+          logger.info(`Start process of ${confFile}`);
+          return Start.launch(c, confFile);
+        }));
   }
 
   run() {

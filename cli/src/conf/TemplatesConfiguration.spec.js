@@ -54,15 +54,17 @@ describe('TemplatesConfiguration\'s class ', () => {
   });
 
   it('should generate all the templates', (done) => {
+    const delimiter =  (env.isWin()) ? '\\' : '/';
     let index = 0;
     new TemplatesConfiguration([defTemplate], tmpDir).generate()
       .subscribe(
         (pathFile) => {
           if (index === 0) {
-            expect(pathFile).to.be.string('/servers');
+
+            expect(pathFile).to.be.string(delimiter + 'servers');
           }
           if (index === 1) {
-            expect(pathFile).to.be.string('/servers/test.conf');
+            expect(pathFile).to.be.string(delimiter + 'servers' + delimiter + 'test.conf');
           }
           index += 1;
         },
