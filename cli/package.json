@@ -6,8 +6,8 @@
   "repository": "https://github.com/cgenin/manginx.git",
   "scripts": {
     "eslint": "eslint src",
-    "coverage": "NODE_ENV=test nyc --all mocha",
-    "test": "NODE_ENV=test mocha",
+    "coverage": "nyc --all mocha",
+    "test": " mocha",
     "quality": "npm run test && npm run eslint",
     "prepublish": "npm run quality"
   },

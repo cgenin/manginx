@@ -3,6 +3,7 @@ const Rx = require('rxjs/Rx');
 const {expect} = require('chai');
 const TemplatesModel = require('./TemplatesModel');
 const DB = require('../db');
+const env = require('../env');
 
 const defModel = {name: 'essai', src: 'Path'};
 
@@ -92,7 +93,9 @@ describe('TemplatesModel\'s test', () => {
         add: (o) => {
           const {name, src} = o;
           expect(name).to.be.equal(defModel.name);
-          expect(src).to.be.match(/^\//);
+          if(!env.isWin()){
+              expect(src).to.be.match(/^\//);
+          }
           expect(src).to.be.string(defModel.src);
           return true;
         }
