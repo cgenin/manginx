@@ -1,17 +1,19 @@
 /* eslint-disable no-unused-expressions */
 const path = require('path');
-const Rx = require('rxjs/Rx');
+const { Observable } = require('rxjs/Rx');
 const fs = require('fs-extra');
 const tempDir = require('temp-dir');
 const uuid = require('uuid/v1');
 const {expect} = require('chai');
 const db = require('./db');
 
+const { bindNodeCallback } = Observable;
+
 describe('Db\'s test', () => {
   const absPath = path.resolve(tempDir, `db.test.${uuid()}.json`);
 
   it('test creation db', (done) => {
-    const readFile = Rx.Observable.bindNodeCallback(fs.readFile);
+    const readFile = bindNodeCallback(fs.readFile);
     db.initialize(absPath)
       .delay(db.DELAY_OF_UPDATE)
       .flatMap((d) => {

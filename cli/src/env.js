@@ -1,10 +1,11 @@
 const os = require('os');
 const path = require('path');
-const Rx = require('rxjs/Rx');
+const { Observable } = require('rxjs/Rx');
 const fs = require('fs-extra');
 const tempDir = require('temp-dir');
 const uuid = require('uuid/v1');
 
+const { bindNodeCallback } = Observable;
 const fileName = 'manginx.json';
 const DEFAULT_TEMPLATE = '@manginx/test';
 const TEMPLATE_DIRECTORY = 'handlebars';
@@ -30,7 +31,7 @@ module.exports = {
   },
   targetDir() {
     const absPath = path.resolve(tempDir, uuid());
-    const mkdirs = Rx.Observable.bindNodeCallback(fs.mkdirs);
+    const mkdirs = bindNodeCallback(fs.mkdirs);
     return mkdirs(absPath)
       .map(() => absPath);
   }

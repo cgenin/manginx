@@ -1,16 +1,17 @@
 const sinon = require('sinon');
-const Rx = require('rxjs/Rx');
+const { Observable } = require('rxjs/Rx');
 const {expect} = require('chai');
 const CurrentModel = require('./CurrentModel');
 const DB = require('../db');
 
 const defModel = {name: 'essai', src: '/some/Path'};
+const { of } = Observable;
 
 describe('CurrentModel\'s test', () => {
   let sandbox = null;
   beforeEach(() => {
     sandbox = sinon.createSandbox();
-    sandbox.stub(DB, 'initialize').returns(Rx.Observable.of(DB));
+    sandbox.stub(DB, 'initialize').returns(of(DB));
   });
 
   afterEach(() => {

@@ -1,11 +1,12 @@
 const sinon = require('sinon');
-const Rx = require('rxjs/Rx');
+const { Observable } = require('rxjs/Rx');
 const {throwError} = require('rxjs');
 const {expect} = require('chai');
 const {DEFAULT_TEMPLATE} = require('../env');
 
 const Templates = require('../models/TemplatesModel');
 const templateCommand = require('./templateCommand');
+const { of } = Observable;
 
 const defModel = {
   name: 'n',
@@ -24,12 +25,12 @@ describe('template-command\'s test', () => {
 
   it('should default', (done) => {
     sandbox.stub(Templates, 'list')
-      .returns(Rx.Observable.of(defModel));
+      .returns(of(defModel));
     templateCommand(['node', 'index.js'], () => done(), err => done(err));
   });
   it('should list', (done) => {
     sandbox.stub(Templates, 'list')
-      .returns(Rx.Observable.of(defModel));
+      .returns(of(defModel));
     templateCommand(['node', 'index.js', 'list'], () => done(), err => done(err));
   });
   it('should list when error occured', (done) => {
@@ -39,12 +40,12 @@ describe('template-command\'s test', () => {
   });
   it('should OK if add with result added', (done) => {
     sandbox.stub(Templates, 'add')
-      .returns(Rx.Observable.of(true));
+      .returns(of(true));
     templateCommand(['node', 'index.js', 'add', 'test', '/mon/path'], () => done(), err => done(err));
   });
   it('should OK when template is not added', (done) => {
     sandbox.stub(Templates, 'add')
-      .returns(Rx.Observable.of(false));
+      .returns(of(false));
     templateCommand(['node', 'index.js', 'add', 'test', '/mon/path'], () => done(), err => done(err));
   });
   it('should  OK when template added with error', (done) => {
@@ -63,7 +64,7 @@ describe('template-command\'s test', () => {
 
   it('should  OK when template removed ', (done) => {
     sandbox.stub(Templates, 'remove')
-      .returns(Rx.Observable.of(true));
+      .returns(of(true));
     templateCommand(['node', 'index.js', 'remove', 'test'], () => done(), err => done(err));
   });
 

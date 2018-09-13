@@ -1,5 +1,5 @@
 const Lokijs = require('lokijs');
-const Rx = require('rxjs/Rx');
+const { Observable } = require('rxjs/Rx');
 const Env = require('./env');
 
 let instance = null;
@@ -7,6 +7,8 @@ const CONF_DB = 'configuration';
 const TEMPLATES_DB = 'templates';
 const CURRENT_DB = 'current';
 const DB_NAMES = [CONF_DB, CURRENT_DB, TEMPLATES_DB];
+
+const { create, of } = Observable;
 
 class ArrayColl {
   constructor(db, coll) {
@@ -83,10 +85,10 @@ class DB {
 
   initialize(dbPath) {
     if (instance) {
-      return Rx.Observable.of(instance);
+      return of(instance);
     }
 
-    return Rx.Observable.create((observer) => {
+    return create((observer) => {
       const filePath = dbPath || Env.getDbFilePath();
       this.db = new Lokijs(filePath, {autosave: true});
 

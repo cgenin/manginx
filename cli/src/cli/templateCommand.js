@@ -1,3 +1,4 @@
+const packageJson = require('../../package');
 const {DEFAULT_TEMPLATE} = require('../env');
 const {createCategoryLogger} = require('../Logger');
 const Templates = require('../models/TemplatesModel');
@@ -22,6 +23,9 @@ const initDescription = 'Initalize an module template';
 
 module.exports = (args, successCallback, errorCallback) => {
   const program = new Command('subCommandTemplate');
+
+  program.version(packageJson.version);
+
   program
     .command(addCmd)
     .description(addDescription)

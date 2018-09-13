@@ -1,7 +1,7 @@
 /* eslint-disable no-plusplus */
 const path = require('path');
 const fs = require('fs-extra');
-const Rx = require('rxjs/Rx');
+const { Observable } = require('rxjs/Rx');
 const tempDir = require('temp-dir');
 const uuid = require('uuid/v1');
 const Generator = require('./Generator');
@@ -9,6 +9,7 @@ const {expect} = require('chai');
 
 const testTemplate = '<div>{{name}}</div>';
 const testTemplate2 = '<span>{{name}}</span>';
+const { bindNodeCallback, concat } = Observable;
 
 describe('test Generator class', () => {
   it('should generate template with cache', (done) => {
@@ -16,7 +17,7 @@ describe('test Generator class', () => {
     const obs = new Generator('id1').compile(testTemplate)
       .generate({name: 'test1'}).toText();
     const obs2 = new Generator('id1').generate({name: 'test2'}).toText();
-    Rx.Observable.concat(obs, obs2).subscribe((t) => {
+    concat(obs, obs2).subscribe((t) => {
       expect(t).to.be.equal(`<div>test${nb}</div>`);
       nb++;
       if (nb === 3) {
@@ -39,7 +40,7 @@ describe('test Generator class', () => {
 
   it('should create an file', (done) => {
     const absPath = path.resolve(tempDir, `test${uuid()}`);
-    const readFile = Rx.Observable.bindNodeCallback(fs.readFile);
+    const readFile = bindNodeCallback(fs.readFile);
     new Generator('id1')
       .compile(testTemplate)
       .generate({name: 'test3'})

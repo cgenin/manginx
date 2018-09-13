@@ -9,8 +9,11 @@ const packageJson = require('../../package');
 
 const logger = createCategoryLogger('Manginx');
 
+const portDescription = 'Port definition. Used by \'start\' and \'restart\' command. By default : 80 ';
+const portCommand = '-p, --port <n>';
+
 module.exports = (args, successCallback, errorCallback) => {
-  const program = new Command('mainCommandLine');
+  const program = new Command('manginx');
   program
     .version(packageJson.version);
 
@@ -25,7 +28,7 @@ module.exports = (args, successCallback, errorCallback) => {
   program
     .command('start')
     .alias('-s')
-    .option('-p, --port <n>', 'Port definition. By default : 80 ', parseInt)
+    .option(portCommand, portDescription, parseInt)
     .description('Start nginx')
     .action((cmd) => {
       getStart(cmd)
@@ -65,7 +68,7 @@ module.exports = (args, successCallback, errorCallback) => {
   program
     .command('restart')
     .alias('-r')
-    .option('-p, --port <n>', 'Port definition. By default : 80 ', parseInt)
+    .option(portCommand, portDescription, parseInt)
     .description('restart the server')
     .action((cmd) => {
       new Stop().run()
@@ -103,7 +106,7 @@ module.exports = (args, successCallback, errorCallback) => {
     });
 
   program.command('use <name>')
-    .alias('u')
+    .alias('-u')
     .description(' add an template to the next nginx configuration')
     .action((name) => {
       CurrentModel.add(name)
@@ -121,7 +124,7 @@ module.exports = (args, successCallback, errorCallback) => {
     });
 
   program.command('list')
-    .alias('l')
+    .alias('-l')
     .description('List the used templates')
     .action(() => {
       logger.info('*** Used Templates : *** ');
@@ -141,7 +144,7 @@ module.exports = (args, successCallback, errorCallback) => {
     });
 
   program.command('delete <name>')
-    .alias('d')
+    .alias('-d')
     .description('Remove an configuration template')
     .action((name) => {
       CurrentModel.remove(name)
